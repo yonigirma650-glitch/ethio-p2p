@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ethio P2P</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f6f8;
+      color: #17202a;
+      padding-bottom: 75px;
+    }
+
+    .header {
+      background: #17202a;
+      color: white;
+      padding: 22px 18px;
+      border-radius: 0 0 22px 22px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 25px;
+    }
+
+    .header p {
+      margin: 7px 0 0;
+      opacity: .8;
+    }
+
+    .section {
+      padding: 18px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 13px;
+      border: 0;
+      border-radius: 12px;
+      font-weight: bold;
+      background: white;
+    }
+
+    .tab.active {
+      background: #f0b90b;
+      color: white;
+    }
+
+    .card {
+      background: white;
+      padding: 16px;
+      margin-bottom: 13px;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px #00000012;
+    }
+
+    .seller {
+      font-weight: bold;
+      font-size: 17px;
+    }
+
+    .rating {
+      color: #e5a900;
+      margin-top: 5px;
+    }
+
+    .price {
+      font-size: 23px;
+      font-weight: bold;
+      margin-top: 12px;
+    }
+
+    .limit {
+      color: #667085;
+      margin-top: 5px;
+    }
+
+    .payment {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .buy {
+      width: 100%;
+      margin-top: 13px;
+      padding: 13px;
+      border: 0;
+      border-radius: 12px;
+      background: #16a34a;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .bottom {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top: 1px solid #ddd;
+    }
+
+    .bottom button {
+      border: 0;
+      background: none;
+      font-size: 12px;
+      color: #667085;
+    }
+
+    .bottom button.active {
+      color: #d99a00;
+      font-weight: bold;
+    }
+
+    .icon {
+      display: block;
+      font-size: 21px;
+      margin-bottom: 3px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h1>🇪🇹 Ethio P2P</h1>
+    <p>Buy & Sell USDT with ETB</p>
+  </div>
+
+  <div class="section">
+
+    <div class="tabs">
+      <button class="tab active" onclick="showBuy()">Buy USDT</button>
+      <button class="tab" onclick="showSell()">Sell USDT</button>
+    </div>
+
+    <div id="ads">
+
+      <div class="card">
+        <div class="seller">👤 Trusted Seller</div>
+        <div class="rating">★★★★★ 98% • 125 orders</div>
+
+        <div class="price">1 USDT = 155 ETB</div>
+
+        <div class="limit">
+          Limit: 500 – 50,000 ETB
+        </div>
+
+        <div class="payment">
+          💳 CBE &nbsp; • &nbsp; 📱 Telebirr
+        </div>
+
+        <button class="buy" onclick="buyUSDT()">
+          Buy USDT
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="seller">👤 Ethio Trader</div>
+        <div class="rating">★★★★★ 99% • 87 orders</div>
+
+        <div class="price">1 USDT = 156 ETB</div>
+
+        <div class="limit">
+          Limit: 1,000 – 100,000 ETB
+        </div>
+
+        <div class="payment">
+          💳 CBE &nbsp; • &nbsp; 📱 Telebirr
+        </div>
+
+        <button class="buy" onclick="buyUSDT()">
+          Buy USDT
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="bottom">
+    <button class="active">
+      <span class="icon">🏠</span>Home
+    </button>
+
+    <button>
+      <span class="icon">📋</span>Orders
+    </button>
+
+    <button>
+      <span class="icon">📢</span>Ads
+    </button>
+
+    <button>
+      <span class="icon">💰</span>Wallet
+    </button>
+
+    <button>
+      <span class="icon">☰</span>More
+    </button>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+
+    function buyUSDT() {
+      tg.showAlert("Buy USDT feature will be connected next.");
+    }
+
+    function showBuy() {
+      tg.showAlert("Buy USDT selected.");
+    }
+
+    function showSell() {
+      tg.showAlert("Sell USDT selected.");
+    }
+  </script>
+
+</body>
+  </html>
