@@ -1,240 +1,1374 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ethio P2P</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ethio P2P</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+*{box-sizing:border-box}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f6f8;
-      color: #17202a;
-      padding-bottom: 75px;
-    }
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#0b0f14;
+color:#eef2f7;
+padding-bottom:78px
+}
 
-    .header {
-      background: #17202a;
-      color: white;
-      padding: 22px 18px;
-      border-radius: 0 0 22px 22px;
-    }
+button{
+font:inherit;
+cursor:pointer;
+border:0
+}
 
-    .header h1 {
-      margin: 0;
-      font-size: 25px;
-    }
+.header{
+background:#17202a;
+color:#fff;
+padding:20px 18px;
+border-radius:0 0 22px 22px
+}
 
-    .header p {
-      margin: 7px 0 0;
-      opacity: .8;
-    }
+.header h1{
+margin:0;
+font-size:25px
+}
 
-    .section {
-      padding: 18px;
-    }
+.header p{
+margin:7px 0 0;
+opacity:.8
+}
 
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
+.page{
+display:none;
+padding:16px
+}
 
-    .tab {
-      flex: 1;
-      padding: 13px;
-      border: 0;
-      border-radius: 12px;
-      font-weight: bold;
-      background: white;
-    }
+.page.active{
+display:block
+}
 
-    .tab.active {
-      background: #f0b90b;
-      color: white;
-    }
+.tabs{
+display:flex;
+gap:8px;
+margin-bottom:14px
+}
 
-    .card {
-      background: white;
-      padding: 16px;
-      margin-bottom: 13px;
-      border-radius: 16px;
-      box-shadow: 0 2px 8px #00000012;
-    }
+.tab{
+flex:1;
+padding:13px;
+border-radius:12px;
+background:#fff;
+font-weight:bold;
+color:#17202a
+}
 
-    .seller {
-      font-weight: bold;
-      font-size: 17px;
-    }
+.tab.active{
+background:#f8c928
+}
 
-    .rating {
-      color: #e5a900;
-      margin-top: 5px;
-    }
+.card{
+background:#1d242d;
+border:1px solid #303945;
+border-radius:16px;
+padding:16px;
+margin-bottom:13px
+}
 
-    .price {
-      font-size: 23px;
-      font-weight: bold;
-      margin-top: 12px;
-    }
+.row{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:12px
+}
 
-    .limit {
-      color: #667085;
-      margin-top: 5px;
-    }
+.name{
+font-size:17px;
+font-weight:bold
+}
 
-    .payment {
-      margin-top: 10px;
-      font-size: 14px;
-    }
+.muted{
+color:#9aa5b4
+}
 
-    .buy {
-      width: 100%;
-      margin-top: 13px;
-      padding: 13px;
-      border: 0;
-      border-radius: 12px;
-      background: #16a34a;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-    }
+.small{
+font-size:13px
+}
 
-    .bottom {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 70px;
-      background: white;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      border-top: 1px solid #ddd;
-    }
+.price{
+font-size:21px;
+font-weight:bold;
+margin-top:14px
+}
 
-    .bottom button {
-      border: 0;
-      background: none;
-      font-size: 12px;
-      color: #667085;
-    }
+.buy{
+background:#12c984;
+color:white;
+padding:10px 19px;
+border-radius:9px;
+font-weight:bold
+}
 
-    .bottom button.active {
-      color: #d99a00;
-      font-weight: bold;
-    }
+.sell{
+background:#f8c928;
+color:#111;
+padding:10px 19px;
+border-radius:9px;
+font-weight:bold
+}
 
-    .icon {
-      display: block;
-      font-size: 21px;
-      margin-bottom: 3px;
-    }
-  </style>
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px
+}
+
+.stat{
+background:#1d242d;
+border-radius:14px;
+padding:15px
+}
+
+.stat b{
+font-size:21px
+}
+
+.action{
+padding:16px;
+border-radius:13px;
+background:#29313b;
+color:#fff;
+text-align:center
+}
+
+.action.primary{
+background:#12c984
+}
+
+.action.yellow{
+background:#f8c928;
+color:#111
+}
+
+.bottom{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+height:76px;
+background:#1b222b;
+display:flex;
+z-index:20;
+border-top:1px solid #303945
+}
+
+.nav{
+flex:1;
+background:none;
+color:#98a2b1;
+font-size:12px
+}
+
+.nav.active{
+color:#f8c928
+}
+
+.nav span{
+display:block;
+font-size:25px;
+margin-bottom:2px
+}
+
+.item{
+background:#1d242d;
+border:1px solid #303945;
+border-radius:15px;
+padding:17px;
+margin-bottom:12px
+}
+
+.item h3{
+margin:0 0 5px
+}
+
+.item p{
+margin:0;
+color:#9aa5b4
+}
+
+.modal{
+position:fixed;
+inset:0;
+background:#0009;
+display:none;
+align-items:flex-end;
+z-index:50
+}
+
+.modal.show{
+display:flex
+}
+
+.sheet{
+background:#17202a;
+width:100%;
+border-radius:22px 22px 0 0;
+padding:20px;
+max-height:85vh;
+overflow:auto
+}
+
+.input{
+width:100%;
+padding:13px;
+border-radius:10px;
+border:1px solid #44505f;
+background:#0f141a;
+color:#fff;
+margin:7px 0 12px
+}
+
+.close{
+background:#303945;
+color:#fff;
+padding:9px 14px;
+border-radius:9px
+}
+
+.notice{
+background:#30251c;
+border:1px solid #8a6b1e;
+padding:15px;
+border-radius:14px;
+margin-bottom:14px
+}
+</style>
 </head>
 
 <body>
 
-  <div class="header">
-    <h1>🇪🇹 Ethio P2P</h1>
-    <p>Buy & Sell USDT with ETB</p>
-  </div>
+<div id="home" class="page active">
 
-  <div class="section">
+<div class="header">
+<h1>🇪🇹 Ethio P2P</h1>
+<p>Buy & Sell USDT with ETB</p>
+</div>
 
-    <div class="tabs">
-      <button class="tab active" onclick="showBuy()">Buy USDT</button>
-      <button class="tab" onclick="showSell()">Sell USDT</button>
-    </div>
+<div style="padding:16px 16px 0">
 
-    <div id="ads">
+<div class="tabs">
 
-      <div class="card">
-        <div class="seller">👤 Trusted Seller</div>
-        <div class="rating">★★★★★ 98% • 125 orders</div>
+<button class="tab active" onclick="setMarket('buy')">
+Buy USDT
+</button>
 
-        <div class="price">1 USDT = 155 ETB</div>
+<button class="tab" onclick="setMarket('sell')">
+Sell USDT
+</button>
 
-        <div class="limit">
-          Limit: 500 – 50,000 ETB
-        </div>
+</div>
 
-        <div class="payment">
-          💳 CBE &nbsp; • &nbsp; 📱 Telebirr
-        </div>
+</div>
 
-        <button class="buy" onclick="buyUSDT()">
-          Buy USDT
-        </button>
-      </div>
+<div id="market"></div>
 
-      <div class="card">
-        <div class="seller">👤 Ethio Trader</div>
-        <div class="rating">★★★★★ 99% • 87 orders</div>
+</div>
 
-        <div class="price">1 USDT = 156 ETB</div>
 
-        <div class="limit">
-          Limit: 1,000 – 100,000 ETB
-        </div>
+<div id="orders" class="page">
 
-        <div class="payment">
-          💳 CBE &nbsp; • &nbsp; 📱 Telebirr
-        </div>
+<div class="header">
+<h1>Orders</h1>
+<p>Track your P2P transactions</p>
+</div>
 
-        <button class="buy" onclick="buyUSDT()">
-          Buy USDT
-        </button>
-      </div>
+<div style="padding-top:16px">
 
-    </div>
-  </div>
+<div class="item">
 
-  <div class="bottom">
-    <button class="active">
-      <span class="icon">🏠</span>Home
-    </button>
+<h3>Order #EP1001</h3>
 
-    <button>
-      <span class="icon">📋</span>Orders
-    </button>
+<p>
+Buy USDT · 10 USDT · 1,935 ETB
+</p>
 
-    <button>
-      <span class="icon">📢</span>Ads
-    </button>
+<p style="color:#12c984;margin-top:8px">
+● Waiting for payment
+</p>
 
-    <button>
-      <span class="icon">💰</span>Wallet
-    </button>
+</div>
 
-    <button>
-      <span class="icon">☰</span>More
-    </button>
-  </div>
+<div class="item">
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
+<h3>No other orders</h3>
 
-    function buyUSDT() {
-      tg.showAlert("Buy USDT feature will be connected next.");
-    }
+<p>
+Your completed and cancelled orders will appear here.
+</p>
 
-    function showBuy() {
-      tg.showAlert("Buy USDT selected.");
-    }
+</div>
 
-    function showSell() {
-      tg.showAlert("Sell USDT selected.");
-    }
-  </script>
+</div>
+
+</div>
+
+
+<div id="ads" class="page">
+
+<div class="header">
+
+<h1>My Ads</h1>
+
+<p>Manage your buy and sell offers</p>
+
+</div>
+
+<div style="padding-top:16px">
+
+<button
+class="sell"
+style="width:100%;margin-bottom:12px"
+onclick="openCreateAd()">
+
+＋ Create Ad
+
+</button>
+
+<div class="item row">
+
+<div>
+
+<b>Keep Me Online</b>
+
+<div class="muted">
+Always visible to traders
+</div>
+
+</div>
+
+<div style="color:#12c984;font-size:24px">
+●
+</div>
+
+</div>
+
+
+<div class="tabs">
+
+<button class="tab active">
+All
+</button>
+
+<button class="tab">
+Buy
+</button>
+
+<button class="tab">
+Sell
+</button>
+
+<button class="tab">
+Accounts
+</button>
+
+</div>
+
+
+<div class="card" style="text-align:center">
+
+<h2>No Ads Yet</h2>
+
+<p class="muted">
+Create your first ad to start trading
+</p>
+
+<button
+class="sell"
+onclick="openCreateAd()">
+
+Create Your First Ad
+
+</button>
+
+</div>
+
+
+<div class="notice">
+
+<b style="color:#f8c928">
+Note:
+</b>
+
+You can create a maximum of 1 Buy ad and 1 Sell ad.
+
+</div>
+
+</div>
+
+</div>
+
+
+<div id="wallet" class="page">
+
+<div class="header">
+
+<h1>Wallet</h1>
+
+<p>Manage your funds</p>
+
+</div>
+
+<div style="padding-top:16px">
+
+<div class="notice">
+
+<b style="color:#f8c928">
+IMPORTANT:
+</b>
+
+Always select the correct network before depositing or withdrawing USDT.
+
+</div>
+
+
+<div class="card">
+
+<span class="muted">
+Total Balance
+</span>
+
+<h1>
+$0.00
+</h1>
+
+<span class="muted">
+USDT
+</span>
+
+</div>
+
+
+<div class="grid">
+
+<div class="stat">
+
+<span class="muted">
+Available
+</span>
+
+<br>
+
+<b style="color:#12c984">
+$0.00
+</b>
+
+<br>
+
+<span class="small">
+USDT
+</span>
+
+</div>
+
+
+<div class="stat">
+
+<span class="muted">
+In Escrow
+</span>
+
+<br>
+
+<b style="color:#f8c928">
+$0.00
+</b>
+
+<br>
+
+<span class="small">
+USDT
+</span>
+
+</div>
+
+</div>
+
+
+<div class="grid" style="margin-top:10px">
+
+<button
+class="action primary"
+onclick="alert('Deposit will be connected to the secure wallet backend.')">
+
+⇩
+<br>
+
+<b>
+Deposit
+</b>
+
+</button>
+
+
+<button
+class="action yellow"
+onclick="alert('Withdraw will be connected after wallet verification.')">
+
+⇧
+<br>
+
+<b>
+Withdraw
+</b>
+
+</button>
+
+</div>
+
+
+<button
+class="action"
+style="width:100%;margin-top:10px"
+onclick="alert('Transaction history will appear here.')">
+
+History
+
+</button>
+
+</div>
+
+</div>
+
+
+<div id="more" class="page">
+
+<div class="header">
+
+<h1>More</h1>
+
+<p>Account and support</p>
+
+</div>
+
+<div style="padding-top:16px">
+
+
+<div
+class="item"
+onclick="showInfo(
+'View Profile',
+'Your profile, verification status and trading statistics.'
+)">
+
+<h3>
+👤 View Profile
+</h3>
+
+<p>
+See your profile details
+</p>
+
+</div>
+
+
+<div
+class="item"
+onclick="openAccounts()">
+
+<h3>
+💳 Payment Accounts
+</h3>
+
+<p>
+Manage CBE, Telebirr and other payment methods
+</p>
+
+</div>
+
+
+<div
+class="item"
+onclick="showInfo(
+'Bonus and Rewards',
+'Earn points and receive trading rewards.'
+)">
+
+<h3>
+🏅 Bonus and Rewards
+</h3>
+
+<p>
+Earn points and win prizes
+</p>
+
+</div>
+
+
+<div
+class="item"
+onclick="showInfo(
+'Referral Program',
+'Invite friends and earn rewards.'
+)">
+
+<h3>
+🎁 Referral Program
+</h3>
+
+<p>
+Invite friends and earn rewards
+</p>
+
+</div>
+
+
+<div
+class="item"
+onclick="showInfo(
+'Security',
+'Security settings and secret code.'
+)">
+
+<h3>
+🔒 Security
+</h3>
+
+<p>
+Manage your security
+</p>
+
+</div>
+
+
+<div
+class="item"
+onclick="showInfo(
+'Contact Center',
+'Contact the Ethio P2P support team.'
+)">
+
+<h3>
+💬 Contact Center
+</h3>
+
+<p>
+Get support from our team
+</p>
+
+</div>
+
+
+<div
+class="item"
+onclick="showInfo(
+'How to Use Guide',
+'Choose Buy or Sell, select an offer, follow the payment instructions, then confirm payment.'
+)">
+
+<h3>
+📖 How to Use Guide
+</h3>
+
+<p>
+Learn how to use the platform
+</p>
+
+</div>
+
+
+<div
+class="item"
+onclick="showInfo(
+'Video Tutorials',
+'Tutorial videos can be connected here.'
+)">
+
+<h3>
+🎥 Video Tutorials
+</h3>
+
+<p>
+Learn with video
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="bottom">
+
+<button
+class="nav active"
+onclick="go('home',this)">
+
+<span>⌂</span>
+Home
+
+</button>
+
+
+<button
+class="nav"
+onclick="go('orders',this)">
+
+<span>▤</span>
+Orders
+
+</button>
+
+
+<button
+class="nav"
+onclick="go('ads',this)">
+
+<span>⌁</span>
+Ads
+
+</button>
+
+
+<button
+class="nav"
+onclick="go('wallet',this)">
+
+<span>▣</span>
+Wallet
+
+</button>
+
+
+<button
+class="nav"
+onclick="go('more',this)">
+
+<span>•••</span>
+More
+
+</button>
+
+</div>
+
+
+<div
+id="modal"
+class="modal"
+onclick="if(event.target.id==='modal')closeModal()">
+
+<div
+class="sheet"
+id="sheet">
+</div>
+
+</div>
+
+
+<script>
+
+const tg=window.Telegram?.WebApp;
+
+if(tg){
+tg.ready();
+tg.expand();
+}
+
+
+const sellers=[
+
+{
+name:'Zed@2024 ✓✓',
+rate:'100%',
+orders:172,
+price:'193.50',
+limit:'5,000 - 101,452.05 ETB',
+pay:['Telebirr']
+},
+
+{
+name:'Miki 👑',
+rate:'81.5%',
+orders:30,
+price:'193.80',
+limit:'5,000 - 31,476.99 ETB',
+pay:['Telebirr']
+},
+
+{
+name:'AD1897 💥⚙️',
+rate:'100%',
+orders:136,
+price:'193.90',
+limit:'200 - 7,300 ETB',
+pay:['Telebirr']
+},
+
+{
+name:'Happy//_+// 🥉',
+rate:'98%',
+orders:750,
+price:'193.90',
+limit:'2,000 - 40,849.78 ETB',
+pay:['CBE','Telebirr']
+}
+
+];
+
+
+const buyers=[
+
+{
+name:'Ethio Buyer',
+rate:'99%',
+orders:88,
+price:'192.80',
+limit:'1,000 - 50,000 ETB',
+pay:['CBE','Telebirr']
+},
+
+{
+name:'Trusted Buyer',
+rate:'100%',
+orders:143,
+price:'192.60',
+limit:'2,000 - 80,000 ETB',
+pay:['Telebirr']
+}
+
+];
+
+
+function go(id,btn){
+
+document
+.querySelectorAll('.page')
+.forEach(x=>x.classList.remove('active'));
+
+document
+.getElementById(id)
+.classList.add('active');
+
+document
+.querySelectorAll('.nav')
+.forEach(x=>x.classList.remove('active'));
+
+if(btn){
+btn.classList.add('active');
+}
+
+window.scrollTo(0,0);
+
+}
+
+
+function setMarket(type){
+
+document
+.querySelectorAll('.tab')
+.forEach(x=>x.classList.remove('active'));
+
+document
+.querySelectorAll('.tab')
+[type==='buy'?0:1]
+.classList.add('active');
+
+
+const list=
+type==='buy'
+?sellers
+:buyers;
+
+
+document.getElementById('market').innerHTML=
+
+list.map((x,i)=>`
+
+<div class="card">
+
+<div class="row">
+
+<div>
+
+<div class="name">
+🟡 ${x.name}
+</div>
+
+<div class="small">
+
+⭐ ${x.rate}
+&nbsp; | &nbsp;
+${x.orders} orders
+
+</div>
+
+</div>
+
+
+<button
+class="${type==='buy'?'buy':'sell'}"
+onclick="${type==='buy'
+?`openBuy(${i})`
+:`openSell(${i})`}">
+
+${type==='buy'?'Buy':'Sell'}
+
+</button>
+
+</div>
+
+
+<hr
+style="border-color:#303945;border-width:1px 0 0;margin:14px 0">
+
+
+<div class="grid">
+
+<div>
+
+<span class="small muted">
+PRICE
+</span>
+
+<div class="price">
+
+${x.price}
+
+<span class="small muted">
+ETB
+</span>
+
+</div>
+
+</div>
+
+
+<div>
+
+<span class="small muted">
+LIMIT
+</span>
+
+<div style="margin-top:10px">
+${x.limit}
+</div>
+
+</div>
+
+</div>
+
+
+<div style="margin-top:12px">
+
+<span class="small muted">
+PAYMENT
+</span>
+
+<div style="margin-top:7px">
+
+${x.pay.map(p=>`
+
+<span
+style="
+background:#303945;
+padding:7px 10px;
+border-radius:7px;
+margin-right:5px;
+display:inline-block">
+
+${p}
+
+</span>
+
+`).join('')}
+
+</div>
+
+</div>
+
+</div>
+
+`).join('');
+
+}
+
+
+function openBuy(i){
+
+const x=sellers[i];
+
+showSheet(`
+
+<h2>
+Buy USDT
+</h2>
+
+<p class="muted">
+
+Seller:
+${x.name}
+
+<br>
+
+Price:
+${x.price}
+ETB / USDT
+
+</p>
+
+
+<label>
+Amount (USDT)
+</label>
+
+<input
+class="input"
+id="amount"
+type="number"
+placeholder="e.g. 10">
+
+
+<label>
+Choose your payment account
+</label>
+
+<select
+class="input"
+id="myPay">
+
+<option>
+CBE
+</option>
+
+<option>
+Telebirr
+</option>
+
+</select>
+
+
+<div class="notice">
+
+After you confirm, the seller's payment instructions/account will be shown securely.
+
+Do not send money before an order is created.
+
+</div>
+
+
+<button
+class="buy"
+style="width:100%"
+onclick="createOrder('buy',${i})">
+
+Create Buy Order
+
+</button>
+
+`);
+
+}
+
+
+function openSell(i){
+
+const x=buyers[i];
+
+showSheet(`
+
+<h2>
+Sell USDT
+</h2>
+
+<p class="muted">
+
+Buyer:
+${x.name}
+
+<br>
+
+Price:
+${x.price}
+ETB / USDT
+
+</p>
+
+
+<label>
+Amount (USDT)
+</label>
+
+<input
+class="input"
+id="amount"
+type="number"
+placeholder="e.g. 10">
+
+
+<label>
+Receive ETB through
+</label>
+
+<select
+class="input"
+id="myPay">
+
+<option>
+CBE
+</option>
+
+<option>
+Telebirr
+</option>
+
+</select>
+
+
+<div class="notice">
+
+Your payment account will be shown to the buyer after the sell order is created.
+
+</div>
+
+
+<button
+class="sell"
+style="width:100%"
+onclick="createOrder('sell',${i})">
+
+Create Sell Order
+
+</button>
+
+`);
+
+}
+
+
+function createOrder(type,i){
+
+const amount=
+Number(
+document
+.getElementById('amount')
+?.value||0
+);
+
+
+if(!amount){
+
+alert(
+'Enter the USDT amount first.'
+);
+
+return;
+
+}
+
+
+closeModal();
+
+
+alert(
+
+type==='buy'
+
+?'Buy order created. Open Orders to continue.'
+
+:'Sell order created. Open Orders to continue.'
+
+);
+
+}
+
+
+function openAccounts(){
+
+showSheet(`
+
+<h2>
+Payment Accounts
+</h2>
+
+
+<div class="item">
+
+<h3>
+🏦 Commercial Bank of Ethiopia (CBE)
+</h3>
+
+<p class="muted">
+Add your CBE account securely.
+</p>
+
+<button
+class="sell"
+onclick="alert('Account form will be connected to the secure backend.')">
+
+Add CBE
+
+</button>
+
+</div>
+
+
+<div class="item">
+
+<h3>
+📱 Telebirr
+</h3>
+
+<p class="muted">
+Add your Telebirr account securely.
+</p>
+
+<button
+class="sell"
+onclick="alert('Account form will be connected to the secure backend.')">
+
+Add Telebirr
+
+</button>
+
+</div>
+
+
+<div class="notice">
+
+Never share your PIN, password or OTP with another trader.
+
+</div>
+
+`);
+
+}
+
+
+function openCreateAd(){
+
+showSheet(`
+
+<h2>
+Create Ad
+</h2>
+
+
+<label>
+Type
+</label>
+
+<select class="input">
+
+<option>
+Buy USDT
+</option>
+
+<option>
+Sell USDT
+</option>
+
+</select>
+
+
+<label>
+Price (ETB)
+</label>
+
+<input
+class="input"
+placeholder="193.50">
+
+
+<label>
+Minimum ETB
+</label>
+
+<input
+class="input"
+placeholder="1000">
+
+
+<label>
+Maximum ETB
+</label>
+
+<input
+class="input"
+placeholder="50000">
+
+
+<button
+class="sell"
+style="width:100%"
+onclick="
+alert('Ad form is ready for backend connection.');
+closeModal()
+">
+
+Create Ad
+
+</button>
+
+`);
+
+}
+
+
+function showInfo(title,text){
+
+showSheet(`
+
+<h2>
+${title}
+</h2>
+
+<p
+class="muted"
+style="line-height:1.6">
+
+${text}
+
+</p>
+
+<button
+class="close"
+onclick="closeModal()">
+
+Close
+
+</button>
+
+`);
+
+}
+
+
+function showSheet(content){
+
+document
+.getElementById('sheet')
+.innerHTML=content;
+
+document
+.getElementById('modal')
+.classList.add('show');
+
+}
+
+
+function closeModal(){
+
+document
+.getElementById('modal')
+.classList.remove('show');
+
+}
+
+
+setMarket('buy');
+
+</script>
 
 </body>
-  </html>
+  </html> 
