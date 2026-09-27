@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AllP2PBot</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { background-color: #121418; color: #eaecef; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .bg-card { background-color: #1a1d24; }
+    .bg-card-sub { background-color: #222630; }
+    .border-custom { border-color: #2b313a; }
+    .text-yellow-brand { color: #f0b90b; }
+    .bg-yellow-brand { background-color: #f0b90b; }
+    .step-section { display: none; }
+    .step-section.active { display: block; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-4">
+
+  <!-- TOP HEADER -->
+  <div class="flex justify-between items-center py-2">
+    <div class="flex items-center gap-3">
+      <button class="text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+      <span class="font-bold text-base text-white">AllP2PBot</span>
+    </div>
+    <div class="flex items-center gap-4 text-white">
+      <button><i class="fa-solid fa-chevron-down text-xs"></i></button>
+      <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+    </div>
+  </div>
+
+  <!-- CONTAINER -->
+  <div class="flex-1 flex flex-col justify-center max-w-md mx-auto w-full py-4 space-y-6">
+
+    <!-- STEP 0: WELCOME SCREEN -->
+    <div id="welcome-step" class="step-section active space-y-6 text-center">
+      <!-- Logo / Icon -->
+      <div class="flex flex-col items-center space-y-2">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-600 to-yellow-400 flex items-center justify-center text-black text-2xl font-black shadow-lg">
+          AP
+        </div>
+        <h1 class="text-2xl font-bold text-white tracking-wide">All P2P</h1>
+      </div>
+
+      <!-- Intro Card -->
+      <div class="bg-card p-5 rounded-2xl border border-custom text-left space-y-4 shadow-xl">
+        <p class="text-sm text-gray-300 leading-relaxed">
+          A <span class="text-yellow-brand font-medium">community-based</span> peer-to-peer trading platform powered by the <strong class="text-white">Blockchain Liberty Foundation</strong>[span_0](start_span)[span_0](end_span).
+        </p>
+
+        <div class="space-y-3 pt-2">
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-card-sub border border-custom flex items-center justify-center text-yellow-brand shrink-0">
+              <i class="fa-solid fa-shield text-sm"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-sm text-white">Secure</h4>
+              <p class="text-xs text-gray-400">Protected trades with escrow[span_1](start_span)[span_1](end_span)</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-card-sub border border-custom flex items-center justify-center text-yellow-brand shrink-0">
+              <i class="fa-solid fa-users text-sm"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-sm text-white">Community</h4>
+              <p class="text-xs text-gray-400">Verified members only[span_2](start_span)[span_2](end_span)</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-card-sub border border-custom flex items-center justify-center text-yellow-brand shrink-0">
+              <i class="fa-solid fa-chart-line text-sm"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-sm text-white">Fast</h4>
+              <p class="text-xs text-gray-400">Instant peer-to-peer trades[span_3](start_span)[span_3](end_span)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Membership Access Box -->
+        <div class="bg-card-sub border border-custom p-3.5 rounded-xl space-y-1.5">
+          <div class="flex items-center gap-2 text-yellow-brand font-bold text-sm">
+            <i class="fa-solid fa-circle-check"></i> Membership Access
+          </div>
+          <p class="text-xs text-gray-300 leading-relaxed">
+            Exclusive to closed community members with verified <strong class="text-white">Binance</strong> accounts registered before <span class="text-yellow-brand font-semibold">March 2025</span>[span_4](start_span)[span_4](end_span).
+          </p>
+        </div>
+      </div>
+
+      <button onclick="goToStep('register-1')" class="w-full bg-yellow-brand text-black font-bold py-3.5 rounded-xl text-base shadow-lg transition hover:bg-yellow-400">
+        Get Started →
+      </button>
+
+      <p class="text-xs text-gray-500">Complete registration to start trading[span_5](start_span)[span_5](end_span)</p>
+    </div>
+
+    <!-- STEP 1: REGISTER PART 1 -->
+    <div id="register-1-step" class="step-section space-y-4">
+      <div>
+        <h2 class="text-xl font-bold text-white">Register</h2>
+        <p class="text-xs text-gray-400">Step 1 of 2 — Enter your account details</p>
+      </div>
+
+      <div class="bg-card p-4 rounded-2xl border border-custom space-y-4">
+        <!-- Phone Number -->
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-gray-300">Phone Number <span class="text-rose-500">*</span></label>
+          <div class="flex gap-2">
+            <div class="bg-card-sub border border-custom px-3 py-2.5 rounded-xl text-sm text-gray-300 flex items-center">
+              +251
+            </div>
+            <input type="text" placeholder="912345678" class="flex-1 bg-card-sub border border-custom rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-yellow-brand">
+          </div>
+          <p class="text-[10px] text-gray-500">Enter phone number without country code[span_6](start_span)[span_6](end_span)</p>
+        </div>
+
+        <!-- Currency -->
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-gray-300">Currency <span class="text-rose-500">*</span></label>
+          <div class="bg-card-sub border border-custom rounded-xl px-3 py-2.5 text-sm text-white flex items-center gap-2">
+            <span>🇪🇹</span> Ethiopian Birr (ETB)[span_7](start_span)[span_7](end_span)
+          </div>
+        </div>
+
+        <!-- Binance ID -->
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-gray-300">Binance ID <span class="text-rose-500">*</span></label>
+          <input type="text" value="12225225" class="w-full bg-card-sub border border-yellow-brand rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none">
+          <p class="text-[10px] text-gray-400">Required: Must be registered before March 2025[span_8](start_span)[span_8](end_span)</p>
+        </div>
+
+        <!-- Referral Code -->
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-gray-300">Referral Code (Optional)</label>
+          <input type="text" placeholder="" class="w-full bg-card-sub border border-custom rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-yellow-brand">
+          <p class="text-[10px] text-gray-500">Have a referral code? Enter it when registering on AllP2P[span_9](start_span)[span_9](end_span).</p>
+        </div>
+      </div>
+
+      <button onclick="goToStep('register-2')" class="w-full bg-yellow-brand text-black font-bold py-3.5 rounded-xl text-sm shadow">
+        Continue to Step 2 →
+      </button>
+
+      <div class="bg-card-sub border border-custom p-3 rounded-xl text-[11px] text-gray-400 leading-relaxed">
+        <strong class="text-yellow-brand">Note:</strong> You must have a verified Binance account registered before March 2025 to join this platform[span_10](start_span)[span_10](end_span).
+      </div>
+    </div>
+
+    <!-- STEP 2: REGISTER PART 2 -->
+    <div id="register-2-step" class="step-section space-y-4">
+      <div>
+        <h2 class="text-xl font-bold text-white">Register</h2>
+        <p class="text-xs text-gray-400">Step 2 of 2 — Upload verification documents and set your security code[span_11](start_span)[span_11](end_span)</p>
+      </div>
+
+      <div class="bg-card p-4 rounded-2xl border border-custom space-y-4">
+        <!-- National ID Front -->
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-gray-300">National ID - Front Side <span class="text-rose-500">*</span></label>
+          <div class="border-2 border-dashed border-custom rounded-xl p-4 text-center bg-card-sub cursor-pointer hover:border-yellow-brand transition">
+            <i class="fa-regular fa-file-lines text-2xl text-gray-400 mb-1"></i>
+            <p class="text-xs font-medium text-white">Click to upload front side[span_12](start_span)[span_12](end_span)</p>
+            <p class="text-[10px] text-gray-500 mt-0.5">Max size: 10MB (will be compressed)[span_13](start_span)[span_13](end_span)</p>
+          </div>
+        </div>
+
+        <!-- National ID Back -->
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-gray-300">National ID - Back Side <span class="text-rose-500">*</span></label>
+          <div class="border-2 border-dashed border-custom rounded-xl p-4 text-center bg-card-sub cursor-pointer hover:border-yellow-brand transition">
+            <i class="fa-regular fa-file-lines text-2xl text-gray-400 mb-1"></i>
+            <p class="text-xs font-medium text-white">Click to upload back side[span_14](start_span)[span_14](end_span)</p>
+            <p class="text-[10px] text-gray-500 mt-0.5">Max size: 10MB (will be compressed)[span_15](start_span)[span_15](end_span)</p>
+          </div>
+        </div>
+
+        <!-- Secret Code -->
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-gray-300">Secret Code (Password) <span class="text-rose-500">*</span></label>
+          <input type="password" placeholder="••••" class="w-full bg-card-sub border border-custom rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-yellow-brand">
+          <p class="text-[10px] text-gray-500">Numeric code only — used for sensitive operations[span_16](start_span)[span_16](end_span)</p>
+        </div>
+
+        <!-- Confirm Secret Code -->
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-gray-300">Confirm Secret Code (Password) <span class="text-rose-500">*</span></label>
+          <input type="password" placeholder="••••" class="w-full bg-card-sub border border-custom rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-yellow-brand">
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <button onclick="goToStep('register-1')" class="w-1/3 bg-card border border-custom text-white font-bold py-3 rounded-xl text-sm">
+          ← Back[span_17](start_span)[span_17](end_span)
+        </button>
+        <button onclick="alert('Registration Completed!')" class="flex-1 bg-yellow-brand text-black font-bold py-3 rounded-xl text-sm shadow">
+          Complete Registration[span_18](start_span)[span_18](end_span)
+        </button>
+      </div>
+
+      <div class="bg-card-sub border border-custom p-3 rounded-xl text-[11px] text-gray-400 leading-relaxed">
+        <strong class="text-yellow-brand">Note:</strong> Your documents will be securely stored and used only for verification purposes. After registration, your account will be reviewed by our team[span_19](start_span)[span_19](end_span).
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="text-center py-2 text-[11px] text-gray-500">
+    Powered by Blockchain Liberty Foundation[span_20](start_span)[span_20](end_span)
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    function goToStep(stepId) {
+      document.querySelectorAll('.step-section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(stepId + '-step').classList.add('active');
+    }
+  </script>
+</body>
+</html>
