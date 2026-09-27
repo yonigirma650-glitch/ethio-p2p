@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ethio p2p</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { background-color: #0d0e12; color: #eaecef; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .bg-card { background-color: #181a20; }
+    .bg-card-sub { background-color: #1e232a; }
+    .border-custom { border-color: #2b313a; }
+    .text-yellow-brand { color: #f0b90b; }
+    .bg-yellow-brand { background-color: #f0b90b; }
+    .text-emerald-brand { color: #0ecb81; }
+    .bg-emerald-brand { background-color: #0ecb81; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .nav-btn.active { color: #f0b90b; }
+  </style>
+</head>
+<body class="pb-20">
+
+  <!-- TOP HEADER -->
+  <div class="px-4 py-3 flex justify-between items-center border-b border-custom">
+    <div class="flex items-center gap-2">
+      <button class="text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+      <span class="font-bold text-base text-white">Ethio p2p 🇪🇹</span>
+    </div>
+    <div class="flex items-center gap-4 text-white">
+      <button><i class="fa-solid fa-chevron-down text-xs"></i></button>
+      <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+    </div>
+  </div>
+
+  <!-- MAIN DASHBOARD -->
+  <div id="main-dashboard">
+    
+    <!-- HOME TAB -->
+    <div id="home-tab" class="tab-content active p-4 space-y-4">
+      <div>
+        <h1 class="text-xl font-bold text-white">All P2P Bot</h1>
+        <p class="text-xs text-gray-400 mt-0.5">Trade USDT with local currency</p>
+      </div>
+
+      <div class="flex bg-card p-1 rounded-xl border border-custom">
+        <button id="buyTabBtn" onclick="toggleTradeType('buy')" class="flex-1 py-2 rounded-lg bg-emerald-brand font-bold text-black text-sm">Buy</button>
+        <button id="sellTabBtn" onclick="toggleTradeType('sell')" class="flex-1 py-2 rounded-lg text-gray-400 font-bold text-sm">Sell</button>
+      </div>
+
+      <!-- Offers List -->
+      <div class="space-y-3">
+        <div class="bg-card p-4 rounded-xl border border-custom space-y-3">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-full bg-amber-500 text-black text-xs font-bold flex items-center justify-center">T</div>
+              <div>
+                <p class="font-bold text-sm flex items-center gap-1 text-white">Teke_94 <i class="fa-solid fa-circle-check text-yellow-brand text-[10px]"></i></p>
+                <p class="text-[11px] text-gray-400">602 orders | 99.0% completion</p>
+              </div>
+            </div>
+            <button class="bg-emerald-brand text-black font-bold px-4 py-1.5 rounded-lg text-sm">Buy</button>
+          </div>
+          <div class="flex justify-between items-end border-t border-custom pt-3 text-xs">
+            <div>
+              <p class="text-gray-400">Price</p>
+              <p class="text-base font-bold text-white mt-0.5">194.00 <span class="text-xs text-yellow-brand font-normal">ETB</span></p>
+            </div>
+            <div class="text-right">
+              <p class="text-gray-400">Limit: 300.00 - 795.40</p>
+              <span class="inline-block mt-1 bg-card-sub border border-custom text-gray-300 px-2 py-0.5 rounded text-[10px]">Telebirr</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDERS TAB -->
+    <div id="orders-tab" class="tab-content p-4 space-y-4">
+      <div>
+        <h1 class="text-xl font-bold text-white">My Orders</h1>
+        <p class="text-xs text-gray-400 mt-0.5">Track your trade activity</p>
+      </div>
+      
+      <div class="flex justify-between items-center">
+        <div class="flex gap-2">
+          <button class="px-4 py-1.5 rounded-lg bg-yellow-brand text-black font-bold text-xs">Ongoing</button>
+          <button class="px-4 py-1.5 rounded-lg bg-card text-gray-400 font-bold text-xs border border-custom">Completed</button>
+        </div>
+        <button class="text-yellow-brand text-lg"><i class="fa-solid fa-rotate-right"></i></button>
+      </div>
+
+      <div class="flex flex-col items-center justify-center py-24 text-center space-y-3">
+        <div class="w-12 h-12 rounded-full bg-card border border-custom flex items-center justify-center text-gray-400 text-xl">
+          <i class="fa-solid fa-circle-exclamation"></i>
+        </div>
+        <h3 class="font-bold text-base text-white">No ongoing orders or requests</h3>
+        <p class="text-xs text-gray-400 max-w-[260px] leading-relaxed">Start trading to see your active orders and requests here</p>
+        <button onclick="switchMainTab('home')" class="mt-2 bg-yellow-brand text-black font-bold px-6 py-2.5 rounded-xl text-sm">Browse Marketplace</button>
+      </div>
+    </div>
+
+    <!-- ADS TAB -->
+    <div id="ads-tab" class="tab-content p-4 space-y-4">
+      <div class="bg-card p-4 rounded-xl border border-custom space-y-1">
+        <h1 class="text-xl font-bold text-white">My Ads</h1>
+        <p class="text-xs text-gray-400">Manage your buy and sell offers</p>
+      </div>
+
+      <button class="w-full bg-yellow-brand text-black font-bold py-3 rounded-xl text-sm shadow">+ Create Ad</button>
+
+      <div class="bg-card p-4 rounded-xl border border-custom flex justify-between items-center">
+        <div class="space-y-0.5">
+          <p class="font-bold text-sm text-white">Keep Me Online</p>
+          <p class="text-xs text-gray-400">Always visible to traders</p>
+        </div>
+        <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+      </div>
+
+      <div class="flex gap-2 overflow-x-auto pb-1">
+        <button class="px-4 py-1.5 rounded-lg bg-white text-black font-bold text-xs">All</button>
+        <button class="px-4 py-1.5 rounded-lg bg-white text-black font-bold text-xs">Buy</button>
+        <button class="px-4 py-1.5 rounded-lg bg-white text-black font-bold text-xs">Sell</button>
+        <button class="px-4 py-1.5 rounded-lg bg-white text-black font-bold text-xs">Accounts</button>
+      </div>
+
+      <div class="flex flex-col items-center justify-center py-20 text-center space-y-3">
+        <div class="w-12 h-12 rounded-full bg-card border border-custom flex items-center justify-center text-gray-400 text-xl">
+          <i class="fa-solid fa-chart-line"></i>
+        </div>
+        <h3 class="font-bold text-base text-white">No Ads Yet</h3>
+        <p class="text-xs text-gray-400">Create your first ad to start trading</p>
+        <button class="bg-yellow-brand text-black font-bold px-6 py-2.5 rounded-xl text-sm">Create Your First Ad</button>
+      </div>
+
+      <div class="bg-[#241f12] border border-[#524119] p-3 rounded-xl text-[11px] text-amber-200 leading-relaxed">
+        <strong>Note:</strong> You can create a maximum of 1 Buy ad and 1 Sell ad.
+      </div>
+    </div>
+
+    <!-- WALLET TAB -->
+    <div id="wallet-tab" class="tab-content p-4 space-y-4">
+      <div class="bg-card p-4 rounded-xl border border-custom space-y-1">
+        <h1 class="text-xl font-bold text-white">Wallet</h1>
+        <p class="text-xs text-gray-400">Manage your funds</p>
+      </div>
+
+      <div class="bg-[#2b2211] border border-[#6b5016] p-3.5 rounded-xl text-[11px] text-amber-200 leading-relaxed space-y-1">
+        <p class="font-bold text-amber-400">IMPORTANT:</p>
+        <p>Always select the correct network before depositing or withdrawing USDT.</p>
+      </div>
+
+      <div class="bg-card p-4 rounded-xl border border-custom space-y-1">
+        <p class="text-xs text-gray-400">Total Balance</p>
+        <h2 class="text-2xl font-bold text-white">$0.00</h2>
+        <p class="text-xs text-gray-400">USDT</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-card p-4 rounded-xl border border-custom space-y-1">
+          <p class="text-xs text-gray-400">Available</p>
+          <p class="text-lg font-bold text-emerald-brand">$0.00</p>
+          <p class="text-[11px] text-gray-400">USDT</p>
+        </div>
+        <div class="bg-card p-4 rounded-xl border border-custom space-y-1">
+          <p class="text-xs text-gray-400">In Escrow</p>
+          <p class="text-lg font-bold text-yellow-brand">$0.00</p>
+          <p class="text-[11px] text-gray-400">USDT</p>
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <button class="flex-1 bg-emerald-brand text-black font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2">
+          <i class="fa-solid fa-arrow-down text-xs"></i> Deposit
+        </button>
+        <button class="flex-1 bg-yellow-brand text-black font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2">
+          <i class="fa-solid fa-arrow-up text-xs"></i> Withdraw
+        </button>
+      </div>
+
+      <button class="w-full bg-card border border-custom text-white font-medium py-3 rounded-xl text-sm">
+        History
+      </button>
+    </div>
+
+    <!-- MORE TAB -->
+    <div id="more-tab" class="tab-content p-4 space-y-3">
+      <div class="bg-card p-4 rounded-xl border border-custom space-y-1">
+        <h1 class="text-xl font-bold text-white">More</h1>
+        <p class="text-xs text-gray-400">Account and support</p>
+      </div>
+
+      <a href="#" class="bg-card p-4 rounded-xl border border-custom flex items-center gap-3">
+        <i class="fa-regular fa-user text-purple-400 text-lg"></i>
+        <div>
+          <p class="font-bold text-sm text-white">View Profile</p>
+          <p class="text-xs text-gray-400">See your profile details</p>
+        </div>
+      </a>
+
+      <a href="#" class="bg-card p-4 rounded-xl border border-custom flex items-center gap-3">
+        <i class="fa-solid fa-credit-card text-yellow-brand text-lg"></i>
+        <div>
+          <p class="font-bold text-sm text-white">Payment Accounts</p>
+          <p class="text-xs text-gray-400">Manage CBE, Telebirr and other payment methods</p>
+        </div>
+      </a>
+
+      <a href="#" class="bg-card p-4 rounded-xl border border-custom flex items-center gap-3">
+        <i class="fa-solid fa-medal text-yellow-brand text-lg"></i>
+        <div>
+          <p class="font-bold text-sm text-white">Bonus and Rewards</p>
+          <p class="text-xs text-gray-400">Earn points and win prizes</p>
+        </div>
+      </a>
+
+      <a href="#" class="bg-card p-4 rounded-xl border border-custom flex items-center gap-3">
+        <i class="fa-solid fa-gift text-rose-400 text-lg"></i>
+        <div>
+          <p class="font-bold text-sm text-white">Referral Program</p>
+          <p class="text-xs text-gray-400">Invite friends and earn rewards</p>
+        </div>
+      </a>
+
+      <a href="#" class="bg-card p-4 rounded-xl border border-custom flex items-center gap-3">
+        <i class="fa-solid fa-lock text-yellow-brand text-lg"></i>
+        <div>
+          <p class="font-bold text-sm text-white">Security</p>
+          <p class="text-xs text-gray-400">Manage your security</p>
+        </div>
+      </a>
+
+      <a href="#" class="bg-card p-4 rounded-xl border border-custom flex items-center gap-3">
+        <i class="fa-regular fa-comment-dots text-sky-400 text-lg"></i>
+        <div>
+          <p class="font-bold text-sm text-white">Contact Center</p>
+        </div>
+      </a>
+    </div>
+
+    <!-- NAV BAR -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#121418] border-t border-custom py-2 px-6 flex justify-between items-center text-center text-[11px] text-gray-400 z-50">
+      <button onclick="switchMainTab('home')" id="nav-home" class="nav-btn active flex flex-col items-center gap-1">
+        <i class="fa-solid fa-house text-lg"></i><span>Home</span>
+      </button>
+      <button onclick="switchMainTab('orders')" id="nav-orders" class="nav-btn flex flex-col items-center gap-1">
+        <i class="fa-solid fa-file-invoice text-lg"></i><span>Orders</span>
+      </button>
+      <button onclick="switchMainTab('ads')" id="nav-ads" class="nav-btn flex flex-col items-center gap-1">
+        <i class="fa-solid fa-bullhorn text-lg"></i><span>Ads</span>
+      </button>
+      <button onclick="switchMainTab('wallet')" id="nav-wallet" class="nav-btn flex flex-col items-center gap-1">
+        <i class="fa-solid fa-wallet text-lg"></i><span>Wallet</span>
+      </button>
+      <button onclick="switchMainTab('more')" id="nav-more" class="nav-btn flex flex-col items-center gap-1">
+        <i class="fa-solid fa-ellipsis text-lg"></i><span>More</span>
+      </button>
+    </nav>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    function switchMainTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById(tabName + '-tab').classList.add('active');
+      document.getElementById('nav-' + tabName).classList.add('active');
+    }
+
+    function toggleTradeType(type) {
+      const buyBtn = document.getElementById('buyTabBtn');
+      const sellBtn = document.getElementById('sellTabBtn');
+      if(type === 'buy') {
+        buyBtn.className = "flex-1 py-2 rounded-lg bg-emerald-brand font-bold text-black text-sm";
+        sellBtn.className = "flex-1 py-2 rounded-lg text-gray-400 font-bold text-sm";
+      } else {
+        sellBtn.className = "flex-1 py-2 rounded-lg bg-rose-600 font-bold text-white text-sm";
+        buyBtn.className = "flex-1 py-2 rounded-lg text-gray-400 font-bold text-sm";
+      }
+    }
+  </script>
+</body>
+</html>
