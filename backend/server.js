@@ -7,11 +7,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Supabase connection
 const supabase = createClient(
-  "SUPABASE_URL_KEE",sb_publishable_d9hLjHnekNm8HVYT2qgC4g_RaS99HsG
-  "SUPABASE_ANON_key_kee"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmZ2ZpdXdhcmJ2enlibmd6cm1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzOTUzOTQsImV4cCI6MjEwNTk3MTM5NH0.TjEnGKw5XrX1DMoy1Pmk1riA-EaDUMXz3pKkyjkd_lM
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
 );
 
+
+// Test API
 app.get("/api/health", (req, res) => {
   res.json({
     success: true,
@@ -19,6 +22,57 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+
+// Create Order API
+app.post("/api/orders", async (req, res) => {
+  try {
+    const {
+      user_id,
+      type,
+      amount,
+      price,
+      payment_method
+    } = req.body;
+
+
+    const { data, error } = await supabase
+      .from("orders")
+      .insert([
+        {
+          user_id,
+          type,
+          amount,
+          price,
+          payment_method
+        }
+      ])
+      .select();
+
+
+    if (error) {
+      return res.status(400).json({
+        success: false,
+        error: error.message
+      });
+    }
+
+
+    res.json({
+      success: true,
+      order: data
+    });
+
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+
+// Server start
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
