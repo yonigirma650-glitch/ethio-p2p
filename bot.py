@@ -6,8 +6,8 @@ from telegram.ext import (
 )
 
 # 1. Token Bot-ii fi ID Group Admin keetii asitti galchi
-BOT_TOKEN = Your token was replaced with a new one. You can use this token to access HTTP API:
-8669113896:AAHNejwqpUuhTIiwC0zUZ3I0LD5cAqbKXI0
+BOT_TOKEN =os.getenv(Your token was replaced with a new one. You can use this token to access HTTP API:
+8669113896:AAHNejwqpUuhTIiwC0zUZ3I0LD5cAqbKXI0)
 ADMIN_GROUP_ID =  8567050757 
 
 NAME, PHONE, FRONT_ID, BACK_ID = range(4)
