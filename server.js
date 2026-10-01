@@ -316,11 +316,39 @@ res.json({
 
 
 
-// =======================
+// ====================
 // VERIFY ACCOUNT
-// =======================
+// ====================
+app.post('/api/verify-account', async (req, res) => {
+    const { fullName, phoneNumber } = req.body;
+    
+    console.log("VERIFY:", fullName, phoneNumber);
 
-app.post("/api/verify-account",
+    // Chat ID kee (Ykn Environment variable irraa fiduu dandeessa)
+    const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID || "8669113896:AAHSbZASGWAf05QthiuPmSp62zbmBSHPHLc";
+
+    const message = `🤖 *Admin Bot Panel*\n\nNew verification request received from user. Review details and choose action:\n\n*Name:* ${fullName}\n*Phone:* ${phoneNumber}`;
+
+    try {
+        // Bot instance kee duraan uumame fayyadamuun ergaa erga
+        if (typeof bot !== 'undefined') {
+            await bot.sendMessage(ADMIN_CHAT_ID, message, { parse_mode: 'Markdown' });
+        }
+        
+        res.json({
+            success: true,
+            message: "Verification received and sent to Telegram!"
+        });
+    } catch (err) {
+        console.error("Telegram error:", err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+
+
 (req,res)=>{
 
 
