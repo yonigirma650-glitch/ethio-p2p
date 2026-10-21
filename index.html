@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #0b0e11; color: #eaecef; font-family: sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .nav-item.active { color: #f0b90b; }
+        .modal { display: none; }
+        .modal.active { display: flex; }
+    </style>
+</head>
+<body class="pb-20">
+
+    <!-- MAIN CONTAINER -->
+    <div class="p-4">
+
+        <!-- 1. HOME TAB -->
+        <div id="home-tab" class="tab-content">
+            <div class="flex bg-[#181a20] p-1 rounded-lg mb-4">
+                <button onclick="switchHomeSub('buy')" id="buy-btn" class="flex-1 py-2 text-center font-bold rounded-md bg-[#2ebd85] text-white">Buy</button>
+                <button onclick="switchHomeSub('sell')" id="sell-btn" class="flex-1 py-2 text-center font-bold rounded-md text-gray-400">Sell</button>
+            </div>
+            
+            <div id="market-offers" class="space-y-3">
+                <!-- Dynamic Market Ads render here -->
+            </div>
+        </div>
+
+        <!-- 2. ORDERS TAB -->
+        <div id="orders-tab" class="tab-content">
+            <h2 class="text-xl font-bold mb-1">My Orders</h2>
+            <p class="text-xs text-gray-400 mb-4">Track your trade activity</p>
+            <div class="flex space-x-2 mb-4">
+                <button onclick="switchOrderTab('ongoing')" id="ord-ongoing-btn" class="bg-[#f0b90b] text-black px-4 py-1.5 rounded-full text-sm font-semibold">Ongoing</button>
+                <button onclick="switchOrderTab('completed')" id="ord-completed-btn" class="bg-[#181a20] text-gray-400 px-4 py-1.5 rounded-full text-sm">Completed</button>
+            </div>
+
+            <div id="orders-list-container">
+                <!-- Orders will render here dynamically -->
+            </div>
+        </div>
+
+        <!-- 3. ADS TAB -->
+        <div id="ads-tab" class="tab-content active">
+            <div class="flex justify-between items-center mb-1">
+                <h2 class="text-xl font-bold">My Ads</h2>
+                <button onclick="openCreateAdModal()" class="bg-[#f0b90b] text-black text-xs font-bold px-4 py-1.5 rounded-lg cursor-pointer">Create</button>
+            </div>
+            <p class="text-xs text-gray-400 mb-4">Manage your buy and sell offers</p>
+            
+            <div class="bg-[#181a20] p-3 rounded-xl flex justify-between items-center mb-4">
+                <div>
+                    <p class="text-sm font-semibold text-white">Keep Me Online</p>
+                    <p class="text-xs text-gray-400">Always visible to traders</p>
+                </div>
+                <input type="checkbox" checked class="accent-[#2ebd85] w-5 h-5 cursor-pointer">
+            </div>
+
+            <div class="flex space-x-2 border-b border-gray-800 pb-3 mb-4">
+                <button class="bg-[#f0b90b] text-black px-4 py-1 rounded-md text-xs font-bold">All</button>
+                <button class="text-gray-400 px-4 py-1 rounded-md text-xs">Buy</button>
+                <button class="text-gray-400 px-4 py-1 rounded-md text-xs">Sell</button>
+            </div>
+
+            <div id="my-ads-container">
+                <!-- User Ads render dynamically -->
+            </div>
+
+            <div class="bg-[#181a20] border border-yellow-500/20 p-3 rounded-xl text-xs text-yellow-500/80 mt-6">
+                <b>Note:</b> You can create a maximum of 1 Buy ad and 1 Sell ad. Multiple ads of the same type are not allowed.
+            </div>
+        </div>
+
+        <!-- 4. WALLET TAB -->
+        <div id="wallet-tab" class="tab-content">
+            <div class="flex justify-between items-center mb-1">
+                <h1 class="text-xl font-bold text-white">Wallet</h1>
+                <i onclick="refreshWallet()" class="fa-solid fa-rotate text-gray-400 text-lg cursor-pointer"></i>
+            </div>
+            <p class="text-xs text-gray-400 mb-4">Manage your funds</p>
+
+            <div class="bg-[#181a20] p-4 rounded-xl mb-4 relative">
+                <p class="text-xs text-gray-400">Total Balance</p>
+                <h3 class="text-2xl font-bold text-white mt-1"><span id="total-balance">100.00</span> <span class="text-xs text-gray-400 font-normal">USDT</span></h3>
+                <div class="absolute right-4 top-4 bg-[#23272e] p-2 rounded-lg text-gray-300">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="bg-[#181a20] p-3 rounded-xl">
+                    <p class="text-xs text-gray-400 flex items-center"><i class="fa-solid fa-circle-arrow-down text-[#2ebd85] mr-1"></i> Available</p>
+                    <p class="text-lg font-bold text-[#2ebd85] mt-1">$<span id="avail-balance">100.00</span></p>
+                    <p class="text-[10px] text-gray-500">USDT</p>
+                </div>
+                <div class="bg-[#181a20] p-3 rounded-xl">
+                    <p class="text-xs text-gray-400 flex items-center"><i class="fa-solid fa-clock text-yellow-500 mr-1"></i> In Escrow</p>
+                    <p class="text-lg font-bold text-yellow-500 mt-1">$0.00</p>
+                    <p class="text-[10px] text-gray-500">USDT</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 mb-6">
+                <button onclick="actionDeposit()" class="bg-[#2ebd85] text-white py-3 rounded-xl flex flex-col items-center justify-center text-xs font-semibold cursor-pointer">
+                    <i class="fa-solid fa-download mb-1 text-base"></i> Deposit
+                </button>
+                <button onclick="actionWithdraw()" class="bg-[#f0b90b] text-black py-3 rounded-xl flex flex-col items-center justify-center text-xs font-semibold cursor-pointer">
+                    <i class="fa-solid fa-upload mb-1 text-base"></i> Withdraw
+                </button>
+                <button onclick="alert('Transaction history is empty.')" class="bg-[#181a20] text-gray-300 py-3 rounded-xl flex flex-col items-center justify-center text-xs font-semibold cursor-pointer">
+                    <i class="fa-solid fa-clock-rotate-left mb-1 text-base"></i> History
+                </button>
+            </div>
+
+            <div class="bg-[#181a20] p-4 rounded-xl border border-purple-500/20">
+                <div class="flex items-center space-x-2 mb-2">
+                    <i class="fa-solid fa-gift text-purple-400"></i>
+                    <span class="font-bold text-sm text-white">Trade Bonus Wallet</span>
+                </div>
+                <p class="text-[10px] text-gray-400 mb-3">Merchant: 0.50/0.50 ETB per USDT - Customer: 0.25/0.25</p>
+                <div class="flex justify-between text-xs mb-1">
+                    <span class="text-gray-400">Available Balance</span>
+                    <span class="font-bold text-purple-400">0.00 ETB</span>
+                </div>
+                <div class="flex justify-between text-xs mb-3">
+                    <span class="text-gray-400">Total Earned</span>
+                    <span class="font-bold text-white">0.00 ETB</span>
+                </div>
+                <div class="bg-[#23272e] text-center py-2 rounded-lg text-[11px] text-gray-400">
+                    Minimum 200 ETB required
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. MORE TAB -->
+        <div id="more-tab" class="tab-content">
+            <div class="bg-[#181a20] p-4 rounded-xl flex items-center space-x-4 mb-4">
+                <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center text-xl text-white">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white" id="user-display-name">Trader User</h3>
+                    <p class="text-xs text-gray-400">Username: Trader</p>
+                    <p id="verification-status" class="text-xs text-red-400 mt-0.5">Verification: Not Verified</p>
+                </div>
+            </div>
+            
+            <button onclick="openVerifyModal()" class="w-full bg-[#2ebd85] hover:opacity-90 active:scale-95 transition text-white font-semibold py-2.5 rounded-xl text-sm mb-6 cursor-pointer">
+                Verify Account
+            </button>
+
+            <p class="text-xs text-gray-500 uppercase font-bold mb-2">More</p>
+            <div class="bg-[#181a20] rounded-xl overflow-hidden divide-y divide-gray-800 text-sm">
+                <div onclick="openPaymentAccounts()" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-[#23272e]">
+                    <span class="flex items-center space-x-3"><i class="fa-solid fa-wallet text-gray-400 w-5"></i><span>Payment Accounts</span></span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
+                </div>
+                <div onclick="alert('Security: 2FA & Passcode active')" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-[#23272e]">
+                    <span class="flex items-center space-x-3"><i class="fa-solid fa-shield text-gray-400 w-5"></i><span>Security</span></span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
+                </div>
+                <div onclick="alert('Referral Link: https://p2p.app/ref/trader')" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-[#23272e]">
+                    <span class="flex items-center space-x-3"><i class="fa-solid fa-user-group text-gray-400 w-5"></i><span>Referral Program</span></span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
+                </div>
+                <div onclick="alert('Support: Contact @SupportBot on Telegram')" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-[#23272e]">
+                    <span class="flex items-center space-x-3"><i class="fa-solid fa-headset text-gray-400 w-5"></i><span>Support Center</span></span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
+                </div>
+                <div onclick="alert('Terms & Privacy: All trades are protected by Escrow.')" class="p-3.5 flex justify-between items-center cursor-pointer hover:bg-[#23272e]">
+                    <span class="flex items-center space-x-3"><i class="fa-solid fa-file-contract text-gray-400 w-5"></i><span>Terms & Privacy</span></span>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-500"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CREATE AD MODAL -->
+    <div id="create-ad-modal" class="modal fixed inset-0 bg-black/80 z-50 items-center justify-center p-4">
+        <div class="bg-[#181a20] w-full max-w-md p-5 rounded-2xl border border-gray-800 text-white max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Create Trade Offer</h3>
+                <i onclick="closeCreateAdModal()" class="fa-solid fa-xmark text-gray-400 cursor-pointer text-lg"></i>
+            </div>
+            
+            <form onsubmit="submitNewAd(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-gray-400 mb-1">Ad Type</label>
+                    <select id="ad-type" class="w-full bg-[#23272e] border border-gray-700 p-2.5 rounded-lg text-white">
+                        <option value="BUY">BUY USDT</option>
+                        <option value="SELL">SELL USDT</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Price per USDT (ETB)</label>
+                    <input type="number" id="ad-price" required placeholder="e.g. 125" class="w-full bg-[#23272e] border border-gray-700 p-2.5 rounded-lg text-white">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Total Amount (USDT)</label>
+                    <input type="number" id="ad-amount" required placeholder="e.g. 50" class="w-full bg-[#23272e] border border-gray-700 p-2.5 rounded-lg text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-gray-400 mb-1">Min Limit (ETB)</label>
+                        <input type="number" id="ad-min" value="200" required class="w-full bg-[#23272e] border border-gray-700 p-2.5 rounded-lg text-white">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-1">Max Limit (ETB)</label>
+                        <input type="number" id="ad-max" value="5000000" required class="w-full bg-[#23272e] border border-gray-700 p-2.5 rounded-lg text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Payment Method</label>
+                    <select id="ad-payment" class="w-full bg-[#23272e] border border-gray-700 p-2.5 rounded-lg text-white">
+                        <option value="Telebirr">Telebirr</option>
+                        <option value="CBE">CBE (Commercial Bank)</option>
+                        <option value="CBE Birr">CBE Birr</option>
+                        <option value="Awash Bank">Awash Bank</option>
+                        <option value="M-Pesa">M-Pesa</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Payment Time Window</label>
+                    <select id="ad-timer" class="w-full bg-[#23272e] border border-gray-700 p-2.5 rounded-lg text-white">
+                        <option value="5">5 Minutes</option>
+                        <option value="10" selected>10 Minutes</option>
+                        <option value="15">15 Minutes</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="w-full bg-[#f0b90b] text-black font-bold py-3 rounded-xl mt-4 cursor-pointer text-sm">
+                    Publish Ad
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- VERIFICATION FORM MODAL -->
+    <div id="verify-modal" class="modal fixed inset-0 bg-black/80 z-50 items-center justify-center p-4">
+        <div class="bg-[#181a20] w-full max-w-md p-5 rounded-2xl border border-gray-800 text-white max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Account Verification</h3>
+                <i onclick="closeVerifyModal()" class="fa-solid fa-xmark text-gray-400 cursor-pointer text-lg"></i>
+            </div>
+            
+            <form id="verify-form" onsubmit="submitVerification(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block text-gray-400 mb-1.5 font-medium">Full Name</label>
+                    <input type="text" id="v-name" required class="w-full bg-[#23272e] border border-gray-700 p-3 rounded-lg text-white focus:outline-none focus:border-[#2ebd85]" placeholder="Enter your full name">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1.5 font-medium">Phone Number</label>
+                    <input type="tel" id="v-phone" required class="w-full bg-[#23272e] border border-gray-700 p-3 rounded-lg text-white focus:outline-none focus:border-[#2ebd85]" placeholder="+251...">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1.5 font-medium">National ID (Front)</label>
+                    <input type="file" id="v-id-front" required accept="image/*" class="w-full bg-[#23272e] border border-gray-700 p-3 rounded-lg text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#2ebd85] file:text-black hover:file:opacity-90">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1.5 font-medium">National ID (Back)</label>
+                    <input type="file" id="v-id-back" required accept="image/*" class="w-full bg-[#23272e] border border-gray-700 p-3 rounded-lg text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#2ebd85] file:text-black hover:file:opacity-90">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1.5 font-medium">Selfie Photo</label>
+                    <input type="file" id="v-selfie" required accept="image/*" class="w-full bg-[#23272e] border border-gray-700 p-3 rounded-lg text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#2ebd85] file:text-black hover:file:opacity-90">
+                </div>
+                
+                <button type="submit" class="w-full bg-[#2ebd85] hover:opacity-90 text-white font-bold py-3.5 rounded-xl mt-4 cursor-pointer text-sm">
+                    Submit & Send to Admin Bot
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN ACTION MODAL -->
+    <div id="admin-modal" class="modal fixed inset-0 bg-black/85 z-50 items-center justify-center p-4">
+        <div class="bg-[#181a20] w-full max-w-sm p-5 rounded-2xl border border-yellow-500/30 text-white">
+            <h3 class="text-base font-bold mb-3 text-yellow-400"><i class="fa-solid fa-robot mr-2"></i>Admin Bot Panel</h3>
+            <p class="text-xs text-gray-300 mb-4">New verification request received from user. Review the attached documents and choose action:</p>
+            
+            <div id="admin-details" class="bg-[#23272e] p-3 rounded-xl text-xs mb-4 space-y-1 text-gray-300"></div>
+
+            <div class="flex space-x-2">
+                <button onclick="adminAction('approve')" class="flex-1 bg-[#2ebd85] text-black font-bold py-2.5 rounded-xl text-xs cursor-pointer">
+                    <i class="fa-solid fa-check mr-1"></i> Approve
+                </button>
+                <button onclick="adminAction('reject')" class="flex-1 bg-red-500 text-white font-bold py-2.5 rounded-xl text-xs cursor-pointer">
+                    <i class="fa-solid fa-xmark mr-1"></i> Reject
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAYMENT ACCOUNTS MODAL -->
+    <div id="payment-modal" class="modal fixed inset-0 bg-black/80 z-50 items-center justify-center p-4">
+        <div class="bg-[#181a20] w-full max-w-md p-5 rounded-2xl border border-gray-800 text-white">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Payment Methods</h3>
+                <i onclick="closePaymentModal()" class="fa-solid fa-xmark text-gray-400 cursor-pointer text-lg"></i>
+            </div>
+            
+            <div class="space-y-2 text-xs">
+                <div class="p-3 bg-[#23272e] rounded-xl flex justify-between items-center">
+                    <div>
+                        <p class="font-bold text-white">Telebirr</p>
+                        <p class="text-gray-400">0912****78</p>
+                    </div>
+                    <span class="text-[#2ebd85] font-semibold">Active</span>
+                </div>
+                <div class="p-3 bg-[#23272e] rounded-xl flex justify-between items-center">
+                    <div>
+                        <p class="font-bold text-white">CBE (Commercial Bank)</p>
+                        <p class="text-gray-400">1000****9281</p>
+                    </div>
+                    <span class="text-[#2ebd85] font-semibold">Active</span>
+                </div>
+            </div>
+
+            <button onclick="alert('Add Payment Method clicked!')" class="w-full bg-[#f0b90b] text-black font-bold py-2.5 rounded-xl mt-4 text-xs cursor-pointer">
+                + Add New Payment Account
+            </button>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION BAR -->
+    <div class="fixed bottom-0 left-0 right-0 bg-[#181a20] border-t border-gray-800 flex justify-around py-2 text-xs text-gray-400 z-50">
+        <button onclick="switchTab('home')" id="nav-home" class="nav-item flex flex-col items-center cursor-pointer p-1">
+            <i class="fa-solid fa-house text-lg mb-0.5"></i> Home
+        </button>
+        <button onclick="switchTab('orders')" id="nav-orders" class="nav-item flex flex-col items-center cursor-pointer p-1">
+            <i class="fa-solid fa-clock-rotate-left text-lg mb-0.5"></i> Orders
+        </button>
+        <button onclick="switchTab('ads')" id="nav-ads" class="nav-item active flex flex-col items-center cursor-pointer p-1">
+            <i class="fa-solid fa-bullhorn text-lg mb-0.5"></i> Ads
+        </button>
+        <button onclick="switchTab('wallet')" id="nav-wallet" class="nav-item flex flex-col items-center cursor-pointer p-1">
+            <i class="fa-solid fa-wallet text-lg mb-0.5"></i> Wallet
+        </button>
+        <button onclick="switchTab('more')" id="nav-more" class="nav-item flex flex-col items-center cursor-pointer p-1">
+            <i class="fa-solid fa-ellipsis text-lg mb-0.5"></i> More
+        </button>
+    </div>
+
+    <script>
+        let walletBalance = 100.00;
+        let isVerified = false;
+        let userAds = [];
+        let activeOrders = [];
+        let timerIntervals = {};
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabName + '-tab').classList.add('active');
+            document.getElementById('nav-' + tabName).classList.add('active');
+
+            if(tabName === 'home') renderMarketOffers('BUY');
+            if(tabName === 'ads') renderMyAds();
+            if(tabName === 'orders') renderOrders('ongoing');
+        }
+
+        function switchHomeSub(type) {
+            const buyBtn = document.getElementById('buy-btn');
+            const sellBtn = document.getElementById('sell-btn');
+            if(type === 'buy') {
+                buyBtn.className = "flex-1 py-2 text-center font-bold rounded-md bg-[#2ebd85] text-white";
+                sellBtn.className = "flex-1 py-2 text-center font-bold rounded-md text-gray-400";
+                renderMarketOffers('BUY');
+            } else {
+                sellBtn.className = "flex-1 py-2 text-center font-bold rounded-md bg-[#eb5757] text-white";
+                buyBtn.className = "flex-1 py-2 text-center font-bold rounded-md text-gray-400";
+                renderMarketOffers('SELL');
+            }
+        }
+
+        // --- ADS LOGIC ---
+        function openCreateAdModal() {
+            document.getElementById('create-ad-modal').classList.add('active');
+        }
+        function closeCreateAdModal() {
+            document.getElementById('create-ad-modal').classList.remove('active');
+        }
+
+        function submitNewAd(e) {
+            e.preventDefault();
+            const type = document.getElementById('ad-type').value;
+            const price = parseFloat(document.getElementById('ad-price').value);
+            const amount = parseFloat(document.getElementById('ad-amount').value);
+            const minLimit = parseFloat(document.getElementById('ad-min').value);
+            const maxLimit = parseFloat(document.getElementById('ad-max').value);
+            const payment = document.getElementById('ad-payment').value;
+            const timerMinutes = parseInt(document.getElementById('ad-timer').value);
+
+            if(type === 'SELL' && amount > walletBalance) {
+                alert("❌ Balance kee gahaa miti! Wallet balance kee irra caalaa Sell Ad uumuu hin dandeessu.");
+                return;
+            }
+
+            const existingSameType = userAds.find(a => a.type === type);
+            if(existingSameType) {
+                alert(`⚠️ You can only create 1 ${type} ad at a time!`);
+                return;
+            }
+
+            const newAd = {
+                id: 'ad_' + Date.now(),
+                type, price, amount, minLimit, maxLimit, payment, timerMinutes
+            };
+
+            userAds.push(newAd);
+            closeCreateAdModal();
+            renderMyAds();
+            alert("✅ Ad created successfully!");
+        }
+
+        function renderMyAds() {
+            const container = document.getElementById('my-ads-container');
+            if(userAds.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="text-gray-600 text-3xl mb-2"><i class="fa-solid fa-chart-line"></i></div>
+                        <p class="font-bold text-white">No Ads Yet</p>
+                        <p class="text-xs text-gray-500 mt-1 mb-4">Create your first ad to start trading</p>
+                        <button onclick="openCreateAdModal()" class="bg-[#f0b90b] text-black font-semibold px-6 py-2 rounded-lg text-sm">Create Your First Ad</button>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = userAds.map(ad => `
+                <div class="bg-[#181a20] p-3 rounded-xl mb-3 border border-gray-800">
+                    <div class="flex justify-between items-center text-xs mb-1">
+                        <span class="font-bold ${ad.type === 'BUY' ? 'text-[#2ebd85]' : 'text-[#eb5757]'}">${ad.type} USDT</span>
+                        <span class="text-white font-bold">${ad.price} ETB</span>
+                    </div>
+                    <p class="text-xs text-gray-400">Amount: ${ad.amount} USDT | Limit: ${ad.minLimit}-${ad.maxLimit} ETB</p>
+                    <p class="text-xs text-gray-500 mt-1">Payment: <b>${ad.payment}</b> | Window: <b>${ad.timerMinutes} Mins</b></p>
+                </div>
+            `).join('');
+        }
+
+        function renderMarketOffers(type) {
+            const container = document.getElementById('market-offers');
+            if(userAds.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-20 text-gray-500">
+                        <i class="fa-solid fa-chart-line text-4xl mb-2"></i>
+                        <p>No active market offers found.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = userAds.map(ad => `
+                <div class="bg-[#181a20] p-3.5 rounded-xl border border-gray-800 flex justify-between items-center">
+                    <div>
+                        <p class="text-xs font-bold text-gray-300">Merchant User</p>
+                        <p class="text-sm font-bold text-white mt-0.5">${ad.price} <span class="text-xs font-normal text-gray-400">ETB</span></p>
+                        <p class="text-[11px] text-gray-400">Limit: ${ad.minLimit} - ${ad.maxLimit} ETB</p>
+                        <span class="inline-block bg-[#23272e] text-yellow-500 text-[10px] px-2 py-0.5 rounded mt-1">${ad.payment}</span>
+                    </div>
+                    <button onclick="startTrade('${ad.id}')" class="bg-[#2ebd85] text-black font-bold px-4 py-2 rounded-lg text-xs cursor-pointer">
+                        ${ad.type === 'BUY' ? 'Sell' : 'Buy'}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // --- TRADE & TIMER LOGIC ---
+        function startTrade(adId) {
+            const ad = userAds.find(a => a.id === adId);
+            if(!ad) return;
+
+            const order = {
+                id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
+                ad,
+                status: 'ongoing',
+                secondsLeft: ad.timerMinutes * 60
+            };
+
+            activeOrders.push(order);
+            switchTab('orders');
+            startTimer(order.id);
+        }
+
+        function startTimer(orderId) {
+            timerIntervals[orderId] = setInterval(() => {
+                const ord = activeOrders.find(o => o.id === orderId);
+                if(ord && ord.secondsLeft > 0) {
+                    ord.secondsLeft--;
+                    renderOrders('ongoing');
+                } else if(ord) {
+                    clearInterval(timerIntervals[orderId]);
+                    ord.status = 'expired';
+                    renderOrders('ongoing');
+                }
+            }, 1000);
+        }
+
+        function switchOrderTab(type) {
+            const onBtn = document.getElementById('ord-ongoing-btn');
+            const compBtn = document.getElementById('ord-completed-btn');
+            if(type === 'ongoing') {
+                onBtn.className = "bg-[#f0b90b] text-black px-4 py-1.5 rounded-full text-sm font-semibold";
+                compBtn.className = "bg-[#181a20] text-gray-400 px-4 py-1.5 rounded-full text-sm";
+            } else {
+                compBtn.className = "bg-[#f0b90b] text-black px-4 py-1.5 rounded-full text-sm font-semibold";
+                onBtn.className = "bg-[#181a20] text-gray-400 px-4 py-1.5 rounded-full text-sm";
+            }
+            renderOrders(type);
+        }
+
+        function renderOrders(tab) {
+            const container = document.getElementById('orders-list-container');
+            const filtered = activeOrders.filter(o => tab === 'ongoing' ? o.status === 'ongoing' : o.status === 'completed');
+
+            if(filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-20">
+                        <i class="fa-solid fa-file-lines text-3xl text-gray-600 mb-2"></i>
+                        <p class="text-white font-semibold">No ${tab} orders</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(o => {
+                const mins = Math.floor(o.secondsLeft / 60);
+                const secs = o.secondsLeft % 60;
+                const timeStr = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+                return `
+                <div class="bg-[#181a20] p-4 rounded-xl mb-3 border border-gray-800 text-xs">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-white">${o.id}</span>
+                        <span class="text-yellow-500 font-bold"><i class="fa-solid fa-clock mr-1"></i> Time Left: ${timeStr}</span>
+                    </div>
+                    <p class="text-gray-400">Total: <b>${o.ad.amount} USDT</b> (${o.ad.amount * o.ad.price} ETB)</p>
+                    <p class="text-gray-400">Payment: <b>${o.ad.payment}</b></p>
+
+                    ${o.status === 'ongoing' ? `
+                    <div class="mt-3 flex space-x-2">
+                        <button onclick="completeTrade('${o.id}')" class="flex-1 bg-[#2ebd85] text-black font-bold py-2 rounded-lg cursor-pointer">Confirm Payment</button>
+                    </div>` : ''}
+                </div>`;
+            }).join('');
+        }
+
+        function completeTrade(orderId) {
+            const ord = activeOrders.find(o => o.id === orderId);
+            if(ord) {
+                ord.status = 'completed';
+                clearInterval(timerIntervals[orderId]);
+                alert("✅ Payment Confirmed! Trade completed.");
+                renderOrders('ongoing');
+            }
+        }
+
+        // --- WALLET ACTIONS ---
+        function actionDeposit() {
+            const val = parseFloat(prompt("Enter deposit USDT amount:"));
+            if(val && val > 0) {
+                walletBalance += val;
+                refreshWallet();
+                alert(`✅ Successfully deposited ${val} USDT!`);
+            }
+        }
+
+        function actionWithdraw() {
+            const val = parseFloat(prompt("Enter withdrawal USDT amount:"));
+            if(val && val > 0) {
+                if(val > walletBalance) {
+                    alert("❌ Insufficient balance!");
+                    return;
+                }
+                walletBalance -= val;
+                refreshWallet();
+                alert(`✅ Successfully withdrew ${val} USDT!`);
+            }
+        }
+
+        function refreshWallet() {
+            document.getElementById('total-balance').textContent = walletBalance.toFixed(2);
+            document.getElementById('avail-balance').textContent = walletBalance.toFixed(2);
+        }
+
+        // --- VERIFICATION & PAYMENT MODALS ---
+        function openVerifyModal() { document.getElementById('verify-modal').classList.add('active'); }
+        function closeVerifyModal() { document.getElementById('verify-modal').classList.remove('active'); }
+
+        function submitVerification(e) {
+            e.preventDefault();
+            closeVerifyModal();
+            const name = document.getElementById('v-name').value;
+            const phone = document.getElementById('v-phone').value;
+
+            document.getElementById('admin-details').innerHTML = `
+                <div><b>Name:</b> ${name}</div>
+                <div><b>Phone:</b> ${phone}</div>
+            `;
+
+            alert("📤 Request sent to Admin Bot successfully!");
+            setTimeout(() => { document.getElementById('admin-modal').classList.add('active'); }, 1000);
+        }
+
+        function adminAction(action) {
+            document.getElementById('admin-modal').classList.remove('active');
+            const statusEl = document.getElementById('verification-status');
+
+            if (action === 'approve') {
+                isVerified = true;
+                statusEl.textContent = "Verification: Verified";
+                statusEl.className = "text-xs text-[#2ebd85] mt-0.5 font-semibold";
+                alert("✅ Admin Approved verification!");
+            } else {
+                statusEl.textContent = "Verification: Rejected";
+                statusEl.className = "text-xs text-red-500 mt-0.5 font-semibold";
+                alert("❌ Admin Rejected verification!");
+            }
+        }
+
+        function openPaymentAccounts() { document.getElementById('payment-modal').classList.add('active'); }
+        function closePaymentModal() { document.getElementById('payment-modal').classList.remove('active'); }
+    </script>
+</body>
+</html>
