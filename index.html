@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="om">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P2P Trading Platform</title>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { background-color: #121212; color: #fff; padding-bottom: 70px; }
+    
+    .screen { display: none; padding: 20px; }
+    .active-screen { display: block; }
+
+    /* Forms & Inputs */
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; color: #bbb; font-size: 14px; }
+    input, select, button { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #1e1e1e; color: #fff; font-size: 15px; }
+    input[type="file"] { padding: 8px; }
+    
+    /* Buttons */
+    .btn-primary { background: #f0b90b; color: #000; font-weight: bold; border: none; cursor: pointer; }
+    .btn-secondary { background: #333; color: #fff; border: none; cursor: pointer; margin-top: 10px; }
+    .btn-danger { background: #f44336; color: #fff; border: none; }
+    .btn-success { background: #4caf50; color: #fff; border: none; }
+
+    /* Navigation Bar Bottom */
+    .navbar { position: fixed; bottom: 0; width: 100%; background: #1e1e1e; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #333; }
+    .nav-item { color: #888; text-decoration: none; font-size: 12px; text-align: center; cursor: pointer; }
+    .nav-item.active { color: #f0b90b; font-weight: bold; }
+
+    /* Cards & Lists */
+    .card { background: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #2a2a2a; }
+    .tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+    .tab { flex: 1; padding: 10px; text-align: center; background: #2a2a2a; border-radius: 5px; cursor: pointer; }
+    .tab.active { background: #f0b90b; color: #000; font-weight: bold; }
+    
+    .no-ads { text-align: center; color: #777; margin-top: 40px; font-size: 16px; }
+    .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+    .badge-pending { background: #ff9800; color: #000; }
+    .badge-approved { background: #4caf50; color: #fff; }
+    .badge-rejected { background: #f44336; color: #fff; }
+  </style>
+</head>
+<body>
+
+  <!-- ================= 1. VERIFICATION SCREEN ================= -->
+  <div id="verification-screen" class="screen active-screen">
+    <h2>1. Verfication (Eenyummaa Mirkaneessuu)</h2>
+    <p style="color:#888; margin-bottom: 20px; font-size:13px;">Odeeffannoo kee guutuun akka akkaunttii kee mirkaneessinuuf ergi.</p>
+    
+    <form id="verify-form">
+      <div class="form-group">
+        <label>Maqaa Guutuu</label>
+        <input type="text" id="v-name" required placeholder="Maqaa kee fi Abbaa keetii">
+      </div>
+      <div class="form-group">
+        <label>Lakkoofsa Bilbilaa</label>
+        <input type="tel" id="v-phone" required placeholder="09........">
+      </div>
+      <div class="form-group">
+        <label>National ID (Fuula Duraa)</label>
+        <input type="file" id="v-id-front" required accept="image/*">
+      </div>
+      <div class="form-group">
+        <label>National ID (Fuula Duubaa)</label>
+        <input type="file" id="v-id-back" required accept="image/*">
+      </div>
+      <div class="form-group">
+        <label>Suuraa Selfie Kee</label>
+        <input type="file" id="v-selfie" required accept="image/*">
+      </div>
+      <button type="submit" class="btn-primary">Mirkaneessaaf Ergi</button>
+    </form>
+  </div>
+
+  <!-- ================= PENDING / STATUS SCREEN ================= -->
+  <div id="status-screen" class="screen">
+    <div style="text-align: center; margin-top: 50px;">
+      <h2 id="status-title">Eeggamsarra Jira...</h2>
+      <p id="status-msg" style="color: #aaa; margin: 15px 0;">Odeeffannoon kee qoratamaa jira. Admineen raggaasisuu ykn ol-kaasuu dhiisuu isaatiin dura Home screen galuu hin dandeessu.</p>
+      
+      <!-- Admin simulation buttons for testing -->
+      <div style="margin-top: 40px; border: 1px dashed #555; padding: 15px; border-radius: 8px;">
+        <p style="color:#f0b90b; font-size:12px; margin-bottom:10px;">[Admin Simulator - Testing Option]</p>
+        <button onclick="adminApprove()" class="btn-success" style="margin-bottom:10px;">Admin: Approve User</button>
+        <button onclick="adminReject()" class="btn-danger">Admin: Reject User</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 2. HOME SCREEN (ADS LIST) ================= -->
+  <div id="home-screen" class="screen">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+      <h2>P2P Marketplace</h2>
+      <button onclick="openCreateAd()" class="btn-primary" style="width: auto; padding: 8px 15px;">+ Create Ad</button>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" id="tab-buy-ads" onclick="switchAdTab('BUY')">Buy Ads</div>
+      <div class="tab" id="tab-sell-ads" onclick="switchAdTab('SELL')">Sell Ads</div>
+    </div>
+
+    <div id="ads-container">
+      <!-- Ads list will render dynamically -->
+    </div>
+  </div>
+
+  <!-- ================= CREATE AD MODAL / SCREEN ================= -->
+  <div id="create-ad-screen" class="screen">
+    <h2>Ad Haaraa Uumuu</h2>
+    <form id="create-ad-form" style="margin-top: 15px;">
+      <div class="form-group">
+        <label>Akaakuu Ad (Type)</label>
+        <select id="ad-type" onchange="checkBalanceRequirement()">
+          <option value="SELL">SELL (USDT Gurguruu)</option>
+          <option value="BUY">BUY (USDT Bituu)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Gatiiti / Price per USDT (ETB)</label>
+        <input type="number" id="ad-price" placeholder="Fkn: 120" required>
+      </div>
+
+      <div class="form-group">
+        <label>Hamma Guutuu / Total Amount (USDT)</label>
+        <input type="number" id="ad-amount" placeholder="Fkn: 50" required>
+      </div>
+
+      <div class="form-group">
+        <label>Order Limit (ETB)</label>
+        <div style="display: flex; gap: 10px;">
+          <input type="number" id="ad-min" placeholder="Min (200 ETB)" value="200" min="200" required>
+          <input type="number" id="ad-max" placeholder="Max (5000000 ETB)" value="5000000" max="5000000" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Toftaa Kaffaltii (Payment Method)</label>
+        <select id="ad-payment" required>
+          <option value="Telebirr">Telebirr</option>
+          <option value="CBE">CBE (Commercial Bank)</option>
+          <option value="CBE Birr">CBE Birr</option>
+          <option value="Awash Bank">Awash Bank</option>
+          <option value="M-Pesa">M-Pesa</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-primary" id="btn-create-ad">Create Ad</button>
+      <button type="button" class="btn-secondary" onclick="showScreen('home-screen')">Cancel</button>
+    </form>
+  </div>
+
+  <!-- ================= 3. ORDERS SCREEN ================= -->
+  <div id="orders-screen" class="screen">
+    <h2>Orders Kee</h2>
+    <div class="tabs" style="margin-top: 15px;">
+      <div class="tab active" id="tab-ongoing" onclick="switchOrderTab('ongoing')">Ongoing</div>
+      <div class="tab" id="tab-completed" onclick="switchOrderTab('completed')">Completed</div>
+    </div>
+
+    <div id="orders-container">
+      <!-- Orders list will render dynamically -->
+    </div>
+  </div>
+
+  <!-- ================= 4. WALLET SCREEN ================= -->
+  <div id="wallet-screen" class="screen">
+    <h2>Wallet Kee</h2>
+    <div class="card" style="text-align: center; margin-top: 15px;">
+      <p style="color: #aaa;">Balance Guutuu</p>
+      <h1 style="color: #f0b90b; margin: 10px 0;"><span id="wallet-balance">0.00</span> USDT</h1>
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+      <button onclick="depositSim()" class="btn-primary">Deposit</button>
+      <button onclick="withdrawSim()" class="btn-secondary" style="margin: 0;">Withdraw</button>
+    </div>
+  </div>
+
+  <!-- ================= MORE SCREEN ================= -->
+  <div id="more-screen" class="screen">
+    <h2>Settings & More</h2>
+    <div class="card" style="margin-top: 15px;">
+      <p><strong>Eenyummaa Status:</strong> <span id="user-status-badge" class="badge">Approved</span></p>
+      <p style="margin-top:10px;"><strong>Maqaa:</strong> <span id="profile-name">-</span></p>
+      <p style="margin-top:5px;"><strong>Bilbila:</strong> <span id="profile-phone">-</span></p>
+    </div>
+    <button onclick="resetApp()" class="btn-danger">App Reset Godhi (Clear All Data)</button>
+  </div>
+
+  <!-- ================= NAVIGATION BAR ================= -->
+  <div class="navbar" id="bottom-nav" style="display: none;">
+    <div class="nav-item active" onclick="navTo('home-screen', this)">Home</div>
+    <div class="nav-item" onclick="navTo('orders-screen', this)">Orders</div>
+    <div class="nav-item" onclick="navTo('wallet-screen', this)">Wallet</div>
+    <div class="nav-item" onclick="navTo('more-screen', this)">More</div>
+  </div>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    // State Data
+    let userState = {
+      isVerified: false,
+      status: 'none', // none, pending, approved, rejected
+      name: '',
+      phone: '',
+      balance: 100.00 // Default initial balance for testing
+    };
+
+    let adsList = [];
+    let ordersList = [];
+
+    // Initialize App
+    window.onload = function() {
+      loadStorage();
+      updateNavigationUI();
+      document.getElementById('wallet-balance').innerText = userState.balance.toFixed(2);
+    };
+
+    // Load from LocalStorage
+    function loadStorage() {
+      const storedUser = localStorage.getItem('p2p_user');
+      if (storedUser) userState = JSON.parse(storedUser);
+
+      const storedAds = localStorage.getItem('p2p_ads');
+      if (storedAds) adsList = JSON.parse(storedAds);
+
+      const storedOrders = localStorage.getItem('p2p_orders');
+      if (storedOrders) ordersList = JSON.parse(storedOrders);
+    }
+
+    function saveStorage() {
+      localStorage.setItem('p2p_user', JSON.stringify(userState));
+      localStorage.setItem('p2p_ads', JSON.stringify(adsList));
+      localStorage.setItem('p2p_orders', JSON.stringify(ordersList));
+    }
+
+    // Navigation Rules based on Verification
+    function updateNavigationUI() {
+      const nav = document.getElementById('bottom-nav');
+      
+      if (userState.status === 'approved') {
+        nav.style.display = 'flex';
+        showScreen('home-screen');
+        renderAds('BUY');
+        updateProfileUI();
+      } else if (userState.status === 'pending') {
+        nav.style.display = 'none';
+        showScreen('status-screen');
+        document.getElementById('status-title').innerText = "Eeggamsarra Jira...";
+        document.getElementById('status-msg').innerText = "Admineen teessoo kee qorataa jira. Hanga inni approve godhutti home screen galuu hin dandeessu.";
+      } else if (userState.status === 'rejected') {
+        nav.style.display = 'none';
+        showScreen('status-screen');
+        document.getElementById('status-title').innerText = "Kafaltiin/Eenyummaan Kee Rejected Ta'ee Jira!";
+        document.getElementById('status-msg').innerText = "Odeeffannoo dogoggoraa ergitatatti. Mee irra deebi'ii galmeessi.";
+      } else {
+        nav.style.display = 'none';
+        showScreen('verification-screen');
+      }
+    }
+
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
+      document.getElementById(screenId).classList.add('active-screen');
+    }
+
+    function navTo(screenId, el) {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      el.classList.add('active');
+      showScreen(screenId);
+
+      if (screenId === 'home-screen') renderAds('BUY');
+      if (screenId === 'orders-screen') renderOrders('ongoing');
+    }
+
+    // --- 1. VERIFICATION SUBMIT ---
+    document.getElementById('verify-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      userState.name = document.getElementById('v-name').value;
+      userState.phone = document.getElementById('v-phone').value;
+      userState.status = 'pending';
+      saveStorage();
+      updateNavigationUI();
+    });
+
+    // Admin Action Simulations
+    function adminApprove() {
+      userState.status = 'approved';
+      userState.isVerified = true;
+      saveStorage();
+      updateNavigationUI();
+    }
+
+    function adminReject() {
+      userState.status = 'rejected';
+      saveStorage();
+      updateNavigationUI();
+    }
+
+    // --- 2. ADS MANAGEMENT ---
+    function switchAdTab(type) {
+      document.getElementById('tab-buy-ads').classList.toggle('active', type === 'BUY');
+      document.getElementById('tab-sell-ads').classList.toggle('active', type === 'SELL');
+      renderAds(type);
+    }
+
+    function renderAds(type) {
+      const container = document.getElementById('ads-container');
+      container.innerHTML = '';
+
+      const filtered = adsList.filter(a => a.type === type);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="no-ads">No available ads. Maqaa sobaa hin kayin!</div>`;
+        return;
+      }
+
+      filtered.forEach(ad => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between;">
+            <strong>${ad.userName}</strong>
+            <span style="color:#f0b90b; font-weight:bold;">${ad.price} ETB/USDT</span>
+          </div>
+          <p style="margin: 8px 0; font-size:13px; color:#aaa;">Amount: ${ad.amount} USDT | Limit: ${ad.minLimit} - ${ad.maxLimit} ETB</p>
+          <p style="font-size:12px; color:#4caf50;">Payment: ${ad.payment}</p>
+          <button onclick="tradeOrder('${ad.id}')" class="btn-primary" style="margin-top:10px;">${ad.type === 'BUY' ? 'Sell to User' : 'Buy USDT'}</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function openCreateAd() {
+      showScreen('create-ad-screen');
+      checkBalanceRequirement();
+    }
+
+    function checkBalanceRequirement() {
+      const type = document.getElementById('ad-type').value;
+      const btn = document.getElementById('btn-create-ad');
+      
+      if (type === 'SELL' && userState.balance <= 0) {
+        alert("Balance hin qabdu! Balance malee Sell Ad uumuu hin dandeessu.");
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+      } else {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+      }
+    }
+
+    document.getElementById('create-ad-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const type = document.getElementById('ad-type').value;
+      const price = parseFloat(document.getElementById('ad-price').value);
+      const amount = parseFloat(document.getElementById('ad-amount').value);
+      const minLimit = parseFloat(document.getElementById('ad-min').value);
+      const maxLimit = parseFloat(document.getElementById('ad-max').value);
+      const payment = document.getElementById('ad-payment').value;
+
+      if (type === 'SELL' && amount > userState.balance) {
+        alert("Balance kee irra caalaa sell ad uumuu hin dandeessu!");
+        return;
+      }
+
+      const newAd = {
+        id: 'ad_' + Date.now(),
+        userName: userState.name,
+        type: type,
+        price: price,
+        amount: amount,
+        minLimit: minLimit,
+        maxLimit: maxLimit,
+        payment: payment
+      };
+
+      adsList.push(newAd);
+      saveStorage();
+      alert("Ad sitti milkaa'inaan uumameera!");
+      showScreen('home-screen');
+      renderAds('BUY');
+    });
+
+    // --- 3. TRADE & ORDERS ---
+    function tradeOrder(adId) {
+      const ad = adsList.find(a => a.id === adId);
+      if (!ad) return;
+
+      const order = {
+        id: 'ord_' + Date.now(),
+        adId: ad.id,
+        seller: ad.type === 'SELL' ? ad.userName : userState.name,
+        buyer: ad.type === 'BUY' ? ad.userName : userState.name,
+        amountUSDT: ad.amount,
+        totalETB: ad.amount * ad.price,
+        payment: ad.payment,
+        status: 'ongoing', // ongoing, pending_approval, completed, rejected
+        proofFile: null
+      };
+
+      ordersList.push(order);
+      saveStorage();
+      alert("Order uumameera! Gara tab Orders deemtuun ragaa kaffaltii ergi.");
+      showScreen('orders-screen');
+      renderOrders('ongoing');
+    }
+
+    function switchOrderTab(status) {
+      document.getElementById('tab-ongoing').classList.toggle('active', status === 'ongoing');
+      document.getElementById('tab-completed').classList.toggle('active', status === 'completed');
+      renderOrders(status);
+    }
+
+    function renderOrders(tab) {
+      const container = document.getElementById('orders-container');
+      container.innerHTML = '';
+
+      const filtered = ordersList.filter(o => {
+        if (tab === 'ongoing') return o.status === 'ongoing' || o.status === 'pending_approval';
+        return o.status === 'completed' || o.status === 'rejected';
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="no-ads">Orders homaa hin jiran.</div>`;
+        return;
+      }
+
+      filtered.forEach(ord => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between;">
+            <strong>Order #${ord.id.slice(-4)}</strong>
+            <span class="badge badge-${ord.status === 'completed' ? 'approved' : 'pending'}">${ord.status.toUpperCase()}</span>
+          </div>
+          <p style="margin:5px 0;">Amount: <strong>${ord.amountUSDT} USDT</strong> (${ord.totalETB} ETB)</p>
+          <p style="font-size:12px; color:#aaa;">Payment: ${ord.payment}</p>
+          
+          ${ord.status === 'ongoing' ? `
+            <div style="margin-top:10px;">
+              <label>Ragaa Kaffaltii Upload Godhi (Receipt Image):</label>
+              <input type="file" id="file-${ord.id}" accept="image/*">
+              <button onclick="submitOrderProof('${ord.id}')" class="btn-primary" style="margin-top:5px;">Ragaa Ergi (Approve-af)</button>
+            </div>
+          ` : ''}
+
+          ${ord.status === 'pending_approval' ? `
+            <p style="color:#ff9800; font-size:12px; margin-top:8px;">Ragaan ergameera. Admineen mirkaneessuu dhiisuu qaba.</p>
+            <button onclick="adminApproveOrder('${ord.id}')" class="btn-success" style="margin-top:5px;">[Admin Simulator] Approve Order</button>
+            <button onclick="adminRejectOrder('${ord.id}')" class="btn-danger" style="margin-top:5px;">[Admin Simulator] Reject Order</button>
+          ` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function submitOrderProof(orderId) {
+      const fileInput = document.getElementById(`file-${orderId}`);
+      if (!fileInput.files[0]) {
+        alert("Mee ragaa kaffaltii (file image) filadhu!");
+        return;
+      }
+
+      const ord = ordersList.find(o => o.id === orderId);
+      if (ord) {
+        ord.status = 'pending_approval';
+        ord.proofFile = fileInput.files[0].name;
+        saveStorage();
+        renderOrders('ongoing');
+      }
+    }
+
+    function adminApproveOrder(orderId) {
+      const ord = ordersList.find(o => o.id === orderId);
+      if (ord) {
+        ord.status = 'completed';
+        userState.balance += ord.amountUSDT; // Update wallet balance
+        saveStorage();
+        document.getElementById('wallet-balance').innerText = userState.balance.toFixed(2);
+        renderOrders('ongoing');
+      }
+    }
+
+    function adminRejectOrder(orderId) {
+      const ord = ordersList.find(o => o.id === orderId);
+      if (ord) {
+        ord.status = 'rejected';
+        saveStorage();
+        renderOrders('ongoing');
+      }
+    }
+
+    // --- 4. WALLET SIMULATION ---
+    function depositSim() {
+      const amt = parseFloat(prompt("Hamma USDT deposit gochuu barbaaddu galchi:"));
+      if (amt && amt > 0) {
+        userState.balance += amt;
+        saveStorage();
+        document.getElementById('wallet-balance').innerText = userState.balance.toFixed(2);
+        alert(`${amt} USDT Balance keetti dabalameera!`);
+      }
+    }
+
+    function withdrawSim() {
+      const amt = parseFloat(prompt("Hamma USDT withdraw gochuu barbaaddu galchi:"));
+      if (amt && amt > 0) {
+        if (amt > userState.balance) {
+          alert("Balance kee gahaa miti!");
+          return;
+        }
+        userState.balance -= amt;
+        saveStorage();
+        document.getElementById('wallet-balance').innerText = userState.balance.toFixed(2);
+        alert(`${amt} USDT Baasii gooteetta!`);
+      }
+    }
+
+    // --- PROFILE / MORE ---
+    function updateProfileUI() {
+      document.getElementById('profile-name').innerText = userState.name || '-';
+      document.getElementById('profile-phone').innerText = userState.phone || '-';
+    }
+
+    function resetApp() {
+      if (confirm("Data hunda haquu barbaaddaa?")) {
+        localStorage.clear();
+        location.reload();
+      }
+    }
+  </script>
+</body>
+</html>
